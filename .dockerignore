@@ -1,0 +1,17 @@
+.git
+.gitignore
+.github
+.idea
+.vscode
+.env
+.env.*
+!.env.example
+**/node_modules
+**/dist
+**/coverage
+**/bin
+**/obj
+**/TestResults
+**/*.log
+DECISIONES.MD
+

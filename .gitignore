@@ -1,0 +1,35 @@
+# Variables de entorno y secretos
+.env
+.env.*
+
+AGENTS.md
+
+# Keep the shareable environment template
+!.env.example
+
+# JavaScript / Vue / Vite
+**/node_modules/
+**/dist/
+**/dist-ssr/
+**/.vite/
+**/.cache/
+**/*.local
+
+# .NET
+**/[Bb]in/
+**/[Oo]bj/
+**/[Tt]est[Rr]esults/
+*.user
+*.suo
+
+# Coverage, logs and editors
+**/coverage/
+*.coverage
+*.coveragexml
+*.log
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
+Desktop.ini
