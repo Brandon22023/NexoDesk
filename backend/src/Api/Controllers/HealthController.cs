@@ -1,0 +1,19 @@
+using Microsoft.AspNetCore.Mvc;
+
+namespace Api.Controllers;
+
+[ApiController]
+public sealed class HealthController : ControllerBase
+{
+    [HttpGet("/health")]
+    [HttpGet("/api/health")]
+    public IActionResult Get()
+    {
+        return Ok(new
+        {
+            status = "healthy",
+            service = "mesasitec-backend",
+            checkedAtUtc = DateTimeOffset.UtcNow
+        });
+    }
+}
