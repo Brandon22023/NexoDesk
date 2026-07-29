@@ -1,7 +1,12 @@
+using System.Text;
+using Aplicacion.Abstracciones;
+using Infraestructura.Autenticacion;
 using Infraestructura.Persistencia;
 using Infraestructura.Persistencia.Seed;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +30,29 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         sqliteOptions => sqliteOptions.MigrationsAssembly(
             typeof(AppDbContext).Assembly.FullName)));
 
+builder.Services.Configure<JwtOptions>(
+    builder.Configuration.GetSection(JwtOptions.SectionName));
+builder.Services.AddScoped<IAutenticacionService, AutenticacionService>();
+
+var jwtSecret = builder.Configuration["Authentication:JwtSecret"] ?? string.Empty;
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.MapInboundClaims = false;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtSecret)),
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+builder.Services.AddAuthorization();
+
 builder.Services.AddControllers();
 
 var app = builder.Build();
@@ -33,6 +61,8 @@ await ApplyDatabaseChangesAsync(app, databasePath);
 
 app.MapGet("/", () => "Hello World!");
 
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 await app.RunAsync();
 
