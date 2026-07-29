@@ -33,3 +33,11 @@ AGENTS.md
 .DS_Store
 Thumbs.db
 Desktop.ini
+
+# SQLite
+*.db
+backend/data/
+
+# Explicit build output directories
+bin/
+obj/

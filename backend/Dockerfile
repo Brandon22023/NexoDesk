@@ -5,6 +5,9 @@ FROM ${DOTNET_SDK_IMAGE} AS build
 
 WORKDIR /src
 
+COPY src/Dominio/Dominio.csproj src/Dominio/
+COPY src/Aplicacion/Aplicacion.csproj src/Aplicacion/
+COPY src/Infraestructura/Infraestructura.csproj src/Infraestructura/
 COPY src/Api/Api.csproj src/Api/
 RUN dotnet restore src/Api/Api.csproj
 
@@ -18,9 +21,10 @@ ARG BACKEND_CONTAINER_PORT
 WORKDIR /app
 COPY --from=build /app/publish .
 
+RUN mkdir -p /app/data && chown -R app:app /app/data
+
 EXPOSE ${BACKEND_CONTAINER_PORT}
 
 USER app
 
 ENTRYPOINT ["dotnet", "Api.dll"]
-
