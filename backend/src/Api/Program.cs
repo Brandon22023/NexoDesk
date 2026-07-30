@@ -61,7 +61,28 @@ builder.Services
     });
 builder.Services.AddAuthorization();
 
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<ManejadorExcepciones>();
 builder.Services.AddControllers();
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var errores = context.ModelState
+            .Where(item => item.Value?.Errors.Count > 0)
+            .ToDictionary(
+                item => item.Key,
+                item => item.Value!.Errors
+                    .Select(error => error.ErrorMessage)
+                    .ToArray());
+        var problem = new ValidationProblemDetails(errores)
+        {
+            Type = "https://mesasitec.local/errores/validacion",
+            Title = "Error de validación",
+            Status = StatusCodes.Status422UnprocessableEntity
+        };
+        problem.Extensions["codigo"] = "VALIDACION";
+        return new UnprocessableEntityObjectResult(problem);
+    });
 
 var app = builder.Build();
 
@@ -69,6 +90,7 @@ await ApplyDatabaseChangesAsync(app, databasePath);
 
 app.MapGet("/", () => "Hello World!");
 
+app.UseExceptionHandler();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
