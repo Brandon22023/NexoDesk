@@ -10,6 +10,9 @@ public abstract class ExcepcionAplicacion(
 public sealed class RecursoNoEncontradoException(string message)
     : ExcepcionAplicacion("RECURSO_NO_ENCONTRADO", message);
 
+public sealed class NoAutenticadoException(string message)
+    : ExcepcionAplicacion("NO_AUTENTICADO", message);
+
 public sealed class OperacionNoPermitidaException(string message)
     : ExcepcionAplicacion("OPERACION_NO_PERMITIDA", message);
 

@@ -14,6 +14,7 @@ public sealed class ManejadorExcepciones(
     {
         var (status, title, codigo) = exception switch
         {
+            NoAutenticadoException => (401, "No autenticado", "NO_AUTENTICADO"),
             RecursoNoEncontradoException => (404, "Recurso no encontrado", "RECURSO_NO_ENCONTRADO"),
             OperacionNoPermitidaException => (403, "Operación no permitida", "OPERACION_NO_PERMITIDA"),
             TransicionInvalidaException => (409, "Transición inválida", "TRANSICION_INVALIDA"),

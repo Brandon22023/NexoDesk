@@ -1,0 +1,31 @@
+using Aplicacion.Abstracciones;
+using Aplicacion.DTOs.Categorias;
+using Aplicacion.Excepciones;
+using Infraestructura.Persistencia;
+using Microsoft.EntityFrameworkCore;
+
+namespace Infraestructura.Servicios;
+
+public sealed class CategoriaConsultaService(
+    AppDbContext db,
+    IUsuarioActual usuarioActual) : ICategoriaConsultaService
+{
+    public async Task<IReadOnlyList<CategoriaDto>> ListarActivasAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var contexto = usuarioActual.Obtener()
+            ?? throw new NoAutenticadoException(
+                "No fue posible obtener el usuario autenticado.");
+
+        return await db.Categorias
+            .AsNoTracking()
+            .Where(categoria => categoria.TenantId == contexto.TenantId
+                && categoria.Activo)
+            .OrderBy(categoria => categoria.Nombre)
+            .Select(categoria => new CategoriaDto(
+                categoria.Id,
+                categoria.Nombre,
+                categoria.SlaHoras))
+            .ToListAsync(cancellationToken);
+    }
+}

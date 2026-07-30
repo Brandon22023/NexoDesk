@@ -42,6 +42,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUsuarioActual, UsuarioActual>();
 builder.Services.AddScoped<ISolicitudConsultaService, SolicitudConsultaService>();
 builder.Services.AddScoped<ISolicitudService, SolicitudService>();
+builder.Services.AddScoped<ICategoriaConsultaService, CategoriaConsultaService>();
 
 var jwtSecret = builder.Configuration["Authentication:JwtSecret"] ?? string.Empty;
 builder.Services
