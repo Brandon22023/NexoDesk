@@ -4,6 +4,7 @@ namespace Aplicacion.DTOs.Solicitudes;
 
 public sealed class EditarSolicitudRequest
 {
+    // RN-04: fechaLimiteSla no forma parte del contrato; el servidor la calcula.
     [Required, StringLength(120, MinimumLength = 5)]
     public string Titulo { get; init; } = string.Empty;
 

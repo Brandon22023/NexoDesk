@@ -111,6 +111,7 @@ public sealed class Solicitud
 
     public void Resolver(string motivo, DateTime fechaResolucionUtc)
     {
+        // RN-06: la resolución conserva su motivo y su fecha en UTC.
         Estado = EstadoSolicitud.Resuelta;
         MotivoResolucion = motivo;
         FechaResolucion = fechaResolucionUtc;
@@ -130,6 +131,7 @@ public sealed class Solicitud
 
     public void Cancelar(string motivo)
     {
+        // RN-06: la cancelación conserva su motivo por separado.
         Estado = EstadoSolicitud.Cancelada;
         MotivoCancelacion = motivo;
     }

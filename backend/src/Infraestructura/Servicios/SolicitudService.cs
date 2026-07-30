@@ -24,6 +24,7 @@ public sealed class SolicitudService(
             request.CategoriaId!.Value,
             contexto.TenantId,
             cancellationToken);
+        // RN-04: la fecha de creación y el límite SLA nacen en el servidor.
         var fechaCreacion = DateTime.UtcNow;
         var solicitud = new Solicitud(
             Guid.NewGuid(),
@@ -51,6 +52,8 @@ public sealed class SolicitudService(
         CancellationToken cancellationToken = default)
     {
         var contexto = ObtenerContexto();
+        // RN-01: combinar el id solicitado con el tenant del JWT hace que una
+        // solicitud de otra organización se comporte como inexistente.
         var solicitud = await db.Solicitudes
             .AsNoTracking()
             .Include(item => item.Categoria)
@@ -66,6 +69,8 @@ public sealed class SolicitudService(
             throw new RecursoNoEncontradoException("La solicitud no existe.");
         }
 
+        // RN-03: Admin y Agente pueden ver cualquier solicitud de su tenant;
+        // Solicitante solo puede consultar las creadas por él.
         if (!ReglasPermisoSolicitud.PuedeVer(
                 contexto.Rol,
                 contexto.UsuarioId,
@@ -87,6 +92,7 @@ public sealed class SolicitudService(
         var solicitud = await ObtenerSolicitudTenantAsync(
             solicitudId, contexto.TenantId, cancellationToken);
 
+        // RN-03: un solicitante solo edita una solicitud propia en estado Nueva.
         if (!ReglasPermisoSolicitud.PuedeEditar(
                 contexto.Rol, contexto.UsuarioId,
                 solicitud.SolicitanteId, solicitud.Estado))
@@ -98,6 +104,8 @@ public sealed class SolicitudService(
         var prioridad = ParsePrioridad(request.Prioridad);
         var categoria = await ObtenerCategoriaAsync(
             request.CategoriaId!.Value, contexto.TenantId, cancellationToken);
+        // RN-04: al cambiar categoría o prioridad se conserva fechaCreacion y
+        // se recalcula el SLA solo mientras la solicitud no esté finalizada.
         var debeRecalcular = (solicitud.CategoriaId != categoria.Id
                 || solicitud.Prioridad != prioridad)
             && solicitud.Estado is not EstadoSolicitud.Resuelta
@@ -125,7 +133,12 @@ public sealed class SolicitudService(
             solicitudId, contexto.TenantId, cancellationToken);
         var accion = ParseAccion(request.Accion);
 
-        if (!ReglasPermisoSolicitud.PuedeEjecutar(
+        // RN-02: si la acción no corresponde al estado actual, se omite la
+        // validación de rol y el bloque siguiente devuelve 409.
+        // RN-03: si la transición es válida, se valida qué roles pueden
+        // ejecutarla; un rechazo se traduce en 403 OPERACION_NO_PERMITIDA.
+        if (ReglasTransicionSolicitud.EsPermitida(solicitud.Estado, accion)
+            && !ReglasPermisoSolicitud.PuedeEjecutar(
                 contexto.Rol, contexto.UsuarioId,
                 solicitud.SolicitanteId, accion))
         {
@@ -133,6 +146,8 @@ public sealed class SolicitudService(
                 "El rol del usuario no permite ejecutar esta acción.");
         }
 
+        // RN-02: después de validar permisos, la máquina de estados acepta
+        // únicamente las combinaciones definidas; las demás producen 409.
         if (!ReglasTransicionSolicitud.EsPermitida(solicitud.Estado, accion))
         {
             throw new TransicionInvalidaException(
@@ -176,6 +191,8 @@ public sealed class SolicitudService(
         Guid tenantId,
         CancellationToken cancellationToken)
     {
+        // RN-01: si el id existe en otro tenant, el filtro devuelve null y se
+        // transforma en 404, sin revelar que el recurso existe.
         var solicitud = await db.Solicitudes.SingleOrDefaultAsync(
             item => item.Id == solicitudId && item.TenantId == tenantId,
             cancellationToken);
@@ -225,6 +242,7 @@ public sealed class SolicitudService(
 
     private static string ValidarMotivo(string? motivo, int minimo)
     {
+        // RN-06: se recorta antes de medir para no aceptar solo espacios.
         if (string.IsNullOrWhiteSpace(motivo)
             || motivo.Trim().Length < minimo)
         {
@@ -245,6 +263,7 @@ public sealed class SolicitudService(
         switch (accion)
         {
             case AccionSolicitud.Asignar:
+                // RN-05: no se asigna hasta validar el agente dentro del tenant.
                 solicitud.Asignar(await ValidarAgenteAsync(
                     request.AgenteId, tenantId, cancellationToken));
                 break;
@@ -252,6 +271,7 @@ public sealed class SolicitudService(
                 solicitud.Iniciar();
                 break;
             case AccionSolicitud.Resolver:
+                // RN-06: resolver exige 20 caracteres y registra fecha UTC.
                 solicitud.Resolver(
                     ValidarMotivo(request.Motivo, 20), DateTime.UtcNow);
                 break;
@@ -262,6 +282,7 @@ public sealed class SolicitudService(
                 solicitud.Reabrir();
                 break;
             case AccionSolicitud.Cancelar:
+                // RN-06: cancelar exige un motivo de al menos 10 caracteres.
                 solicitud.Cancelar(ValidarMotivo(request.Motivo, 10));
                 break;
             default:
@@ -274,11 +295,14 @@ public sealed class SolicitudService(
         Guid tenantId,
         CancellationToken cancellationToken)
     {
+        // RN-05: asignar exige explícitamente un agente.
         if (!agenteId.HasValue)
         {
             throw new AgenteInvalidoException("Debe indicar un agente válido.");
         }
 
+        // RN-05: el agente debe existir, estar activo, pertenecer al tenant
+        // actual y tener rol Agente o Admin.
         var esValido = await db.Usuarios.AsNoTracking().AnyAsync(
             item => item.Id == agenteId.Value
                 && item.TenantId == tenantId
@@ -301,8 +325,11 @@ public sealed class SolicitudService(
         int year,
         CancellationToken cancellationToken)
     {
+        // RN-07: el prefijo incluye el año, por lo que el correlativo se
+        // reinicia cada año para cada organización.
         var prefijo = $"SOL-{year}-";
         var ultimoCodigo = await db.Solicitudes.AsNoTracking()
+            // El tenant evita compartir la secuencia entre organizaciones.
             .Where(item => item.TenantId == tenantId
                 && item.Codigo.StartsWith(prefijo))
             .OrderByDescending(item => item.Codigo)
@@ -316,6 +343,7 @@ public sealed class SolicitudService(
             correlativo = ultimo + 1;
         }
 
+        // :00000 mantiene el formato SOL-{año}-{correlativo de cinco dígitos}.
         return $"{prefijo}{correlativo:00000}";
     }
 
@@ -335,6 +363,7 @@ public sealed class SolicitudService(
                 solicitud.Agente.Id, solicitud.Agente.Nombre),
             AsUtc(solicitud.FechaCreacion),
             AsUtc(solicitud.FechaLimiteSla),
+            // RN-04: el detalle expone el vencimiento calculado por el dominio.
             CalculadorSla.EstaVencida(
                 solicitud.FechaLimiteSla, solicitud.Estado, ahoraUtc),
             solicitud.FechaResolucion.HasValue

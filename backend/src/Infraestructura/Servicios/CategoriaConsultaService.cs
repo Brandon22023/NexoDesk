@@ -17,6 +17,7 @@ public sealed class CategoriaConsultaService(
             ?? throw new NoAutenticadoException(
                 "No fue posible obtener el usuario autenticado.");
 
+        // RN-01: solo se exponen categorías activas de la organización del JWT.
         return await db.Categorias
             .AsNoTracking()
             .Where(categoria => categoria.TenantId == contexto.TenantId

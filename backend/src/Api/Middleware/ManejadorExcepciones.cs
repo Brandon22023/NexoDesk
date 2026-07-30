@@ -16,9 +16,12 @@ public sealed class ManejadorExcepciones(
         {
             NoAutenticadoException => (401, "No autenticado", "NO_AUTENTICADO"),
             RecursoNoEncontradoException => (404, "Recurso no encontrado", "RECURSO_NO_ENCONTRADO"),
+            // RN-03: los permisos insuficientes siempre usan 403 y este código.
             OperacionNoPermitidaException => (403, "Operación no permitida", "OPERACION_NO_PERMITIDA"),
             TransicionInvalidaException => (409, "Transición inválida", "TRANSICION_INVALIDA"),
+            // RN-05: un agente inválido responde 422 con este código.
             AgenteInvalidoException => (422, "Agente inválido", "AGENTE_INVALIDO"),
+            // RN-06: motivo ausente o corto responde 422 con este código.
             MotivoRequeridoException => (422, "Motivo requerido", "MOTIVO_REQUERIDO"),
             ValidacionException => (422, "Error de validación", "VALIDACION"),
             _ => (500, "Error interno", "ERROR_INTERNO")

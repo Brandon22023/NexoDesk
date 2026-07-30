@@ -4,6 +4,9 @@ namespace Dominio.Reglas;
 
 public static class ReglasPermisoSolicitud
 {
+    /// RN-03: concentra los permisos de solicitudes por rol para que los
+    /// servicios no repitan decisiones de autorización.
+
     public static bool PuedeVer(
         RolUsuario rol,
         Guid usuarioId,

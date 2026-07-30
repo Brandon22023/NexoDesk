@@ -88,6 +88,7 @@ public sealed class SolicitudConfiguration : IEntityTypeConfiguration<Solicitud>
             .HasForeignKey(solicitud => solicitud.AgenteId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // RN-07: el mismo código solo puede existir una vez por organización.
         builder.HasIndex(solicitud => new { solicitud.TenantId, solicitud.Codigo })
             .IsUnique()
             .HasDatabaseName("UX_Solicitudes_TenantId_Codigo");

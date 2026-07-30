@@ -21,12 +21,15 @@ public sealed class SolicitudConsultaService(
 
         var ahoraUtc = DateTime.UtcNow;
 
+        // RN-01: el tenant se toma del JWT y se aplica desde el inicio de la
+        // consulta; por eso el listado nunca mezcla organizaciones.
         IQueryable<Solicitud> consulta = db.Solicitudes
             .AsNoTracking()
             .Where(solicitud => solicitud.TenantId == contexto.TenantId);
 
         if (contexto.Rol == RolUsuario.Solicitante)
         {
+            // RN-03: un solicitante no lista las solicitudes de otros usuarios.
             consulta = consulta.Where(
                 solicitud => solicitud.SolicitanteId == contexto.UsuarioId);
         }
@@ -66,6 +69,7 @@ public sealed class SolicitudConsultaService(
 
         if (filtro.Vencidas.HasValue)
         {
+            // RN-04: filtra por límite expirado, excluyendo estados finalizados.
             consulta = filtro.Vencidas.Value
                 ? consulta.Where(solicitud =>
                     solicitud.FechaLimiteSla < ahoraUtc

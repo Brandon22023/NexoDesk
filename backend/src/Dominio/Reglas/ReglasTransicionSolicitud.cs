@@ -4,6 +4,11 @@ namespace Dominio.Reglas;
 
 public static class ReglasTransicionSolicitud
 {
+
+    /// RN-02: define las únicas transiciones válidas por estado.
+    /// Cerrada y Cancelada son estados finales porque no tienen casos
+    /// permitidos; cualquier combinación no listada devuelve false.
+
     public static bool EsPermitida(
         EstadoSolicitud estado,
         AccionSolicitud accion)
