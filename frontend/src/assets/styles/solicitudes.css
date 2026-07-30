@@ -1,0 +1,237 @@
+.filters {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.6fr) repeat(4, minmax(125px, 0.8fr)) auto;
+  align-items: end;
+  gap: 14px;
+  margin-bottom: 24px;
+  padding: 18px;
+}
+
+.filters label {
+  display: grid;
+  gap: 7px;
+}
+
+.filters label > span {
+  color: var(--color-primary-dark);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.filters input,
+.filters select,
+.form-control {
+  width: 100%;
+  min-height: 43px;
+  padding: 0 12px;
+  border: 1px solid var(--color-sky-light);
+  border-radius: var(--radius-sm);
+  outline: 0;
+  color: var(--color-primary-dark);
+  background: var(--color-surface);
+  font-size: 13px;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.filters input:focus,
+.filters select:focus,
+.form-control:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-sky-36);
+}
+
+.filters__search > div {
+  position: relative;
+}
+
+.filters__search svg {
+  position: absolute;
+  top: 13px;
+  left: 12px;
+  color: var(--color-primary);
+}
+
+.filters__search input {
+  padding-left: 38px;
+}
+
+.filters__clear {
+  min-height: 43px;
+}
+
+.inline-warning {
+  margin: -10px 0 20px;
+  color: var(--color-primary-dark);
+  font-size: 12px;
+}
+
+.table-shell {
+  overflow-x: auto;
+}
+
+.requests-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.requests-table th {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--color-sky-light);
+  color: var(--color-primary);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.requests-table td {
+  padding: 16px;
+  border-bottom: 1px solid var(--color-sky-light-72);
+  color: var(--color-primary-dark);
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+.requests-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.requests-table tbody tr {
+  transition: background var(--transition-fast);
+}
+
+.requests-table tbody tr:hover {
+  background: var(--color-sky-light-10);
+}
+
+.requests-table td strong,
+.requests-table td small {
+  display: block;
+}
+
+.requests-table td small {
+  margin-top: 4px;
+  color: var(--color-primary);
+}
+
+.requests-table__code {
+  color: var(--color-primary-dark);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.requests-table__code:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.status-badge,
+.priority-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 9px;
+  border: 1px solid var(--color-sky);
+  border-radius: 999px;
+  color: var(--color-primary-dark);
+  background: var(--color-surface);
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.status-badge--asignada,
+.priority-badge--alta {
+  background: var(--color-sky-light);
+}
+
+.status-badge--enproceso,
+.priority-badge--critica {
+  color: var(--color-surface);
+  background: var(--color-primary-dark);
+}
+
+.status-badge--resuelta,
+.priority-badge--baja {
+  background: var(--color-sky-light-72);
+}
+
+.status-badge--cerrada,
+.status-badge--cancelada {
+  color: var(--color-primary);
+}
+
+.requests-table__sla {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 4px 7px;
+  min-width: 155px;
+  color: var(--color-primary);
+}
+
+.requests-table__sla em {
+  grid-column: 2;
+  width: fit-content;
+  color: var(--color-primary-dark);
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.requests-table__sla.is-overdue {
+  color: var(--color-primary-dark);
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.pagination p {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+@media (max-width: 1120px) {
+  .filters {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 680px) {
+  .filters {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .filters__search,
+  .filters__clear {
+    grid-column: 1 / -1;
+  }
+
+  .requests-table {
+    min-width: 930px;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+  }
+
+  .pagination p {
+    order: -1;
+    width: 100%;
+    text-align: center;
+  }
+
+  .pagination .button {
+    flex: 1;
+  }
+}
