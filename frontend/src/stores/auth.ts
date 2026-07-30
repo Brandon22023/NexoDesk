@@ -12,6 +12,7 @@ const SESSION_KEY = 'mesasitec.auth.session'
 
 export const useAuthStore = defineStore('auth', () => {
   const session = ref<AuthSession | null>(readSession())
+  let expirationTimer: number | null = null
 
   const accessToken = computed(() => session.value?.accessToken ?? null)
   const usuario = computed<UsuarioSesion | null>(
@@ -34,12 +35,32 @@ export const useAuthStore = defineStore('auth', () => {
 
     session.value = nextSession
     sessionStorage.setItem(SESSION_KEY, JSON.stringify(nextSession))
+    scheduleExpiration(nextSession.expiresAt)
     return response
   }
 
   function signOut(): void {
     session.value = null
     sessionStorage.removeItem(SESSION_KEY)
+    if (expirationTimer !== null) {
+      window.clearTimeout(expirationTimer)
+      expirationTimer = null
+    }
+  }
+
+  function scheduleExpiration(expiresAt: number): void {
+    if (expirationTimer !== null) {
+      window.clearTimeout(expirationTimer)
+    }
+
+    expirationTimer = window.setTimeout(
+      signOut,
+      Math.max(expiresAt - Date.now(), 0),
+    )
+  }
+
+  if (session.value) {
+    scheduleExpiration(session.value.expiresAt)
   }
 
   return {

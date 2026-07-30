@@ -1,66 +1,35 @@
 import type {
-  ApiProblem,
   LoginCredentials,
   LoginResponse,
   UsuarioSesion,
 } from '../types/auth'
+import { HttpError, httpRequest } from './http'
 
 const LOGIN_ENDPOINT = '/api/v1/auth/login'
 const ROLES: ReadonlySet<string> = new Set(['Admin', 'Agente', 'Solicitante'])
 
-export class AuthApiError extends Error {
-  readonly status: number
-  readonly codigo?: string
-  readonly errores?: Record<string, string[]>
-
-  constructor(message: string, status: number, problem?: ApiProblem) {
-    super(message)
-    this.name = 'AuthApiError'
-    this.status = status
-    this.codigo = problem?.codigo
-    this.errores = problem?.errores
-  }
-}
+export { HttpError as AuthApiError }
 
 export async function login(
   credentials: LoginCredentials,
   signal?: AbortSignal,
 ): Promise<LoginResponse> {
-  const response = await fetch(LOGIN_ENDPOINT, {
+  const payload = await httpRequest<LoginResponse>(LOGIN_ENDPOINT, {
     method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(credentials),
+    body: credentials,
     signal,
+    authenticated: false,
+    redirectOnUnauthorized: false,
   })
 
-  const payload: unknown = await response.json().catch(() => null)
-
-  if (!response.ok) {
-    const problem = isApiProblem(payload) ? payload : undefined
-    throw new AuthApiError(
-      problem?.detail ?? 'No pudimos verificar tus credenciales.',
-      response.status,
-      problem,
-    )
-  }
-
   if (!isLoginResponse(payload)) {
-    throw new AuthApiError(
+    throw new HttpError(
       'El servidor devolvió una respuesta de autenticación inválida.',
-      response.status,
+      502,
     )
   }
 
   return payload
-}
-
-function isApiProblem(value: unknown): value is ApiProblem {
-  return isRecord(value)
-    && (value.detail === undefined || typeof value.detail === 'string')
-    && (value.codigo === undefined || typeof value.codigo === 'string')
 }
 
 function isLoginResponse(value: unknown): value is LoginResponse {
