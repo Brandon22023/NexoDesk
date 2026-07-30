@@ -1,0 +1,98 @@
+@keyframes login-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes login-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes login-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes login-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(0, -12px, 0);
+  }
+}
+
+@keyframes login-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.login-page {
+  animation: login-fade-in 420ms ease-out both;
+}
+
+.login-brand__copy {
+  animation: login-rise-in 700ms var(--ease-product) both;
+}
+
+.login-card {
+  animation: login-slide-up 720ms 100ms var(--ease-product) both;
+}
+
+.login-form__field,
+.login-form__submit {
+  animation: login-rise-in 520ms var(--ease-product) both;
+}
+
+.login-form__field--email {
+  animation-delay: 220ms;
+}
+
+.login-form__field--password {
+  animation-delay: 320ms;
+}
+
+.login-form__submit {
+  animation-delay: 420ms;
+}
+
+.login-ambient--three {
+  animation: login-float 9s ease-in-out infinite;
+}
+
+.login-form__spinner {
+  animation: login-spin 850ms linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
