@@ -1,0 +1,45 @@
+# Decisiones técnicas
+
+### 1. Uso de `PasswordHasher<T>` para el manejo de contraseñas
+
+Decidí utilizar `PasswordHasher<T>` de ASP.NET Core para el almacenamiento y validación de contraseñas. La alternativa considerada fue BCrypt. Elegí `PasswordHasher<T>` porque es una solución integrada en el ecosistema .NET, ampliamente utilizada y suficiente para los requisitos de la prueba.
+
+Además, al tener mayor familiaridad con esta opción, pude implementar la autenticación con más seguridad y rapidez, reduciendo el riesgo de cometer errores por utilizar una herramienta que no recordaba en detalle.
+
+### 2. Uso de Docker Compose para la ejecución del proyecto
+
+Decidí utilizar Docker Compose para levantar toda la solución. La alternativa era ejecutar frontend y backend por separado mediante comandos independientes.
+
+Elegí Docker porque simplifica la puesta en marcha del proyecto, reduce los pasos necesarios para el evaluador y permite que el entorno sea más consistente entre diferentes equipos. También facilita el manejo de variables de entorno, puertos y dependencias desde un único punto de configuración.
+
+### 3. Arquitectura monolítica por capas
+
+Decidí organizar la solución utilizando una arquitectura monolítica por capas (`Api`, `Aplicacion`, `Dominio` e `Infraestructura`). La alternativa descartada fue concentrar toda la lógica en una estructura más simple basada únicamente en carpetas y archivos sin una separación clara de responsabilidades.
+
+Esta organización facilita la ubicación del código, mejora la mantenibilidad y permite separar la lógica de negocio, el acceso a datos y la exposición de la API. Para el tamaño y alcance de esta prueba, un monolito por capas ofrece un equilibrio adecuado entre simplicidad y orden sin añadir la complejidad de una arquitectura distribuida.
+
+
+### Uso de IA
+
+Utilicé herramientas de IA durante todo el desarrollo del proyecto para acelerar la implementación, generar estructuras iniciales, proponer soluciones técnicas, crear parte del código, documentación y pruebas.
+
+Mi participación se centró en analizar el enunciado, definir el enfoque de implementación, validar que las reglas de negocio se cumplieran correctamente, revisar el código generado, ajustar requerimientos mediante iteraciones, ejecutar pruebas, verificar el comportamiento de la aplicación y tomar las decisiones técnicas finales sobre la solución entregada.
+
+La mayor parte del código fue generada con asistencia de IA, pero cada funcionalidad fue revisada y validada antes de incorporarse al proyecto. También se realizaron múltiples ciclos de corrección y refinamiento para asegurar el cumplimiento de los requisitos de la prueba técnica.
+
+
+## 3. Con una semana adicional
+
+Si hubiera tenido una semana más, la habría dedicado principalmente a realizar más pruebas y validaciones del sistema. Me gustaría crear pruebas que recorran los flujos completos de uso, desde el inicio de sesión hasta la creación y gestión de solicitudes, para tener mayor confianza en que todo funciona correctamente.
+
+También agregaría la ejecución automática de las pruebas mediante GitHub Actions para verificar que los cambios futuros no rompan funcionalidades ya implementadas.
+
+Por último, invertiría tiempo en probar el proyecto en entornos completamente limpios para asegurar que cualquier persona pueda seguir el README, ejecutar los comandos indicados y tener el sistema funcionando sin inconvenientes.
+
+
+## 4. Dificultad y resolución
+
+La parte más difícil fue asegurar que la solución cumpliera exactamente con todos los detalles del enunciado. Había muchos requisitos pequeños que podían pasar desapercibidos, como permisos según el rol del usuario, cambios válidos de estado, validaciones específicas y respuestas esperadas por la API.
+
+Lo resolví revisando varias veces la especificación, probando distintos escenarios y apoyándome en herramientas de IA para contrastar ideas y verificar que cada funcionalidad se comportara como se esperaba.
+
