@@ -79,4 +79,58 @@ public sealed class Solicitud
     public Usuario Solicitante { get; private set; } = null!;
 
     public Usuario? Agente { get; private set; }
+
+    public void Editar(
+        string titulo,
+        string descripcion,
+        Guid categoriaId,
+        PrioridadSolicitud prioridad,
+        DateTime? nuevaFechaLimiteSla)
+    {
+        Titulo = titulo;
+        Descripcion = descripcion;
+        CategoriaId = categoriaId;
+        Prioridad = prioridad;
+
+        if (nuevaFechaLimiteSla.HasValue)
+        {
+            FechaLimiteSla = nuevaFechaLimiteSla.Value;
+        }
+    }
+
+    public void Asignar(Guid agenteId)
+    {
+        AgenteId = agenteId;
+        Estado = EstadoSolicitud.Asignada;
+    }
+
+    public void Iniciar()
+    {
+        Estado = EstadoSolicitud.EnProceso;
+    }
+
+    public void Resolver(string motivo, DateTime fechaResolucionUtc)
+    {
+        Estado = EstadoSolicitud.Resuelta;
+        MotivoResolucion = motivo;
+        FechaResolucion = fechaResolucionUtc;
+    }
+
+    public void Cerrar()
+    {
+        Estado = EstadoSolicitud.Cerrada;
+    }
+
+    public void Reabrir()
+    {
+        Estado = EstadoSolicitud.EnProceso;
+        FechaResolucion = null;
+        MotivoResolucion = null;
+    }
+
+    public void Cancelar(string motivo)
+    {
+        Estado = EstadoSolicitud.Cancelada;
+        MotivoCancelacion = motivo;
+    }
 }
