@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,6 +61,36 @@ builder.Services
         };
     });
 builder.Services.AddAuthorization();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "MesaSitec API",
+        Version = "v1",
+        Description = "API de mesa de servicio multi-tenant."
+    });
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Introduce el token JWT como: Bearer {token}"
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        [new OpenApiSecurityScheme
+        {
+            Reference = new OpenApiReference
+            {
+                Type = ReferenceType.SecurityScheme,
+                Id = "Bearer"
+            }
+        }] = Array.Empty<string>()
+    });
+});
 
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ManejadorExcepciones>();
@@ -91,6 +122,12 @@ await ApplyDatabaseChangesAsync(app, databasePath);
 app.MapGet("/", () => "Hello World!");
 
 app.UseExceptionHandler();
+app.UseSwagger();
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "MesaSitec API v1");
+    options.RoutePrefix = "swagger";
+});
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
