@@ -28,9 +28,7 @@ async function handleLogin(credentials: LoginCredentials): Promise<void> {
     successMessage.value = 'Sesión iniciada correctamente.'
 
     const redirect = getSafeRedirect(route.query.redirect)
-    if (redirect) {
-      await router.replace(redirect)
-    }
+    await router.replace(redirect ?? { name: 'solicitudes' })
   } catch (error: unknown) {
     if (error instanceof DOMException && error.name === 'AbortError') {
       return

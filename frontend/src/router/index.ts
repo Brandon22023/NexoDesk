@@ -1,11 +1,54 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '../stores/auth'
+import { pinia } from '../stores/pinia'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      redirect: { name: 'login' },
+      component: () => import('../components/layout/AppLayout.vue'),
+      meta: {
+        requiresAuth: true,
+      },
+      children: [
+        {
+          path: '',
+          redirect: { name: 'solicitudes' },
+        },
+        {
+          path: 'solicitudes',
+          name: 'solicitudes',
+          component: () => import('../views/SolicitudesView.vue'),
+          meta: {
+            title: 'Solicitudes | MesaSitec',
+          },
+        },
+        {
+          path: 'solicitudes/nueva',
+          name: 'solicitud-nueva',
+          component: () => import('../views/SolicitudNuevaView.vue'),
+          meta: {
+            title: 'Nueva solicitud | MesaSitec',
+          },
+        },
+        {
+          path: 'solicitudes/:id',
+          name: 'solicitud-detalle',
+          component: () => import('../views/SolicitudDetalleView.vue'),
+          meta: {
+            title: 'Detalle de solicitud | MesaSitec',
+          },
+        },
+        {
+          path: 'solicitudes/:id/editar',
+          name: 'solicitud-editar',
+          component: () => import('../views/SolicitudEditarView.vue'),
+          meta: {
+            title: 'Editar solicitud | MesaSitec',
+          },
+        },
+      ],
     },
     {
       path: '/login',
@@ -21,6 +64,23 @@ const router = createRouter({
     },
   ],
   scrollBehavior: () => ({ top: 0 }),
+})
+
+router.beforeEach((to) => {
+  const authStore = useAuthStore(pinia)
+
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    return {
+      name: 'login',
+      query: { redirect: to.fullPath },
+    }
+  }
+
+  if (to.name === 'login' && authStore.isAuthenticated) {
+    return { name: 'solicitudes' }
+  }
+
+  return true
 })
 
 router.afterEach((to) => {
