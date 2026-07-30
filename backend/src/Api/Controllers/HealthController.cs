@@ -5,15 +5,10 @@ namespace Api.Controllers;
 [ApiController]
 public sealed class HealthController : ControllerBase
 {
+    [HttpGet("/api/v1/health")]
     [HttpGet("/health")]
-    [HttpGet("/api/health")]
     public IActionResult Get()
     {
-        return Ok(new
-        {
-            status = "healthy",
-            service = "mesasitec-backend",
-            checkedAtUtc = DateTimeOffset.UtcNow
-        });
+        return Ok(new { estado = "ok" });
     }
 }
