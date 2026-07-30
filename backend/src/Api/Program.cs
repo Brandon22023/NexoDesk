@@ -14,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+const string FrontendCorsPolicy = "Frontend";
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
@@ -62,6 +63,21 @@ builder.Services
         };
     });
 builder.Services.AddAuthorization();
+var corsAllowedOrigins = (builder.Configuration["Cors:AllowedOrigins"]
+        ?? string.Empty)
+    .Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
+if (corsAllowedOrigins.Length == 0)
+{
+    throw new InvalidOperationException(
+        "Cors:AllowedOrigins debe incluir al menos un origen permitido.");
+}
+
+builder.Services.AddCors(options =>
+    options.AddPolicy(FrontendCorsPolicy, policy =>
+        policy.WithOrigins(corsAllowedOrigins)
+            .AllowAnyHeader()
+            .AllowAnyMethod()));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -123,6 +139,7 @@ await ApplyDatabaseChangesAsync(app, databasePath);
 app.MapGet("/", () => "Hello World!");
 
 app.UseExceptionHandler();
+app.UseCors(FrontendCorsPolicy);
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
