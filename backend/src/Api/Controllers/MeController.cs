@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Aplicacion.Abstracciones;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,16 +7,17 @@ namespace Api.Controllers;
 [ApiController]
 [Authorize]
 [Route("api/v1/me")]
-public sealed class MeController(IAutenticacionService autenticacionService)
+public sealed class MeController(
+    IAutenticacionService autenticacionService,
+    IUsuarioActual usuarioActual)
     : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> Get(CancellationToken cancellationToken)
     {
-        if (!Guid.TryParse(User.FindFirstValue("sub"), out var usuarioId)
-            || !Guid.TryParse(
-                User.FindFirstValue("tenantId"),
-                out var tenantId))
+        var contexto = usuarioActual.Obtener();
+
+        if (contexto is null)
         {
             return Problem(
                 statusCode: StatusCodes.Status401Unauthorized,
@@ -30,8 +30,8 @@ public sealed class MeController(IAutenticacionService autenticacionService)
         }
 
         var usuario = await autenticacionService.ObtenerUsuarioAsync(
-            usuarioId,
-            tenantId,
+            contexto.UsuarioId,
+            contexto.TenantId,
             cancellationToken);
 
         if (usuario is null)
