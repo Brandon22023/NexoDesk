@@ -1,9 +1,13 @@
 using System.Text;
+using Api.Middleware;
+using Api.Servicios;
 using Aplicacion.Abstracciones;
 using Infraestructura.Autenticacion;
 using Infraestructura.Persistencia;
 using Infraestructura.Persistencia.Seed;
+using Infraestructura.Servicios;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -33,6 +37,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.Configure<JwtOptions>(
     builder.Configuration.GetSection(JwtOptions.SectionName));
 builder.Services.AddScoped<IAutenticacionService, AutenticacionService>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IUsuarioActual, UsuarioActual>();
+builder.Services.AddScoped<ISolicitudConsultaService, SolicitudConsultaService>();
+builder.Services.AddScoped<ISolicitudService, SolicitudService>();
 
 var jwtSecret = builder.Configuration["Authentication:JwtSecret"] ?? string.Empty;
 builder.Services
