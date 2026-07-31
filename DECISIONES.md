@@ -43,22 +43,29 @@ La parte más difícil fue asegurar que la solución cumpliera exactamente con t
 
 Lo resolví revisando varias veces la especificación, probando distintos escenarios y apoyándome en herramientas de IA para contrastar ideas y verificar que cada funcionalidad se comportara como se esperaba.
 
+
+## Código de error para respuestas 500
+
+La especificación define códigos de error para los escenarios de negocio y validación (401, 403, 404, 409 y 422), pero no establece un código específico para errores internos del servidor (500).
+
+Para mantener consistencia en la estructura de respuestas de error, se decidió utilizar:
+
+"codigo": "ERROR_INTERNO"
+
+Este valor fue definido como una decisión de implementación y no forma parte explícita del contrato proporcionado.
+
+
 # Aspectos que requirieron validación adicional
 
 ## RN-04 — Cálculo de SLA
 
 Fue una de las reglas que más tuve que revisar durante el desarrollo para asegurarme de que la estaba aplicando correctamente.
 
-Entendí que el tiempo límite depende de la prioridad de la solicitud:
+En varias ocasiones volví a consultar la especificación para confirmar cómo debía calcularse la fecha límite a partir de las horas base de la categoría y el factor asociado a la prioridad seleccionada.
 
-Baja: 72 horas
-Media: 24 horas
-Alta: 4 horas
+También fue necesario verificar en qué situaciones correspondía recalcular el SLA y cuándo una solicitud debía considerarse vencida.
 
-Sin embargo, en varias ocasiones volví a consultar la especificación para confirmar que no estaba olvidando alguna condición adicional y que el cálculo se realizaba exactamente como se indicaba en los requisitos.
-
-Finalmente, se implementó sumando a la fecha de creación las horas correspondientes según la prioridad seleccionad
-
+La implementación final sigue la fórmula y reglas definidas en la especificación.
 
 ## RN-02 — Máquina de estados
 
