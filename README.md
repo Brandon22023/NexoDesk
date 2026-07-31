@@ -84,6 +84,7 @@ Para comprobar los tipos del frontend:
 
 ```bash
 cd frontend
+npm ci
 npx vue-tsc --noEmit
 ```
 
