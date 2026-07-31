@@ -28,10 +28,13 @@ public sealed class SolicitudesController(
         "-prioridad",
         "codigo"
     ];
-    // GET: /api/v1/solicitudes
-    // Devuelve un listado paginado de solicitudes aplicando
-    // filtros, búsqueda y ordenamiento definidos por el cliente.
+    /// <summary>Lista solicitudes con filtros, ordenamiento y paginación.</summary>
+    /// <remarks>Los resultados se restringen al tenant del token y a las solicitudes propias para el rol Solicitante.</remarks>
     [HttpGet]
+    [ProducesResponseType(typeof(PaginaSolicitudesDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest, "application/problem+json")]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized, "application/problem+json")]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError, "application/problem+json")]
     public async Task<IActionResult> Listar(
         [FromQuery] ListarSolicitudesQuery query,
         CancellationToken cancellationToken)
@@ -83,10 +86,13 @@ public sealed class SolicitudesController(
 
         return Ok(resultado);
     }
-    // /api/v1/solicitudes
-    // Crea una nueva solicitud para la organización del usuario.
-
+    /// <summary>Crea una solicitud para la organización del usuario.</summary>
+    /// <remarks>El servidor asigna el código, el estado inicial y calcula la fecha límite del SLA.</remarks>
     [HttpPost]
+    [ProducesResponseType(typeof(SolicitudDetalleDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized, "application/problem+json")]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity, "application/problem+json")]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError, "application/problem+json")]
     public async Task<IActionResult> Crear(
         [FromBody] CrearSolicitudRequest request,
         CancellationToken cancellationToken)
@@ -98,9 +104,14 @@ public sealed class SolicitudesController(
             nameof(ObtenerDetalle), new { id = solicitud.Id }, solicitud);
     }
     
-    // GET: /api/v1/solicitudes/{id}
-    // Obtiene el detalle completo de una solicitud.
+    /// <summary>Obtiene el detalle completo de una solicitud.</summary>
+    /// <remarks>Un recurso inexistente o perteneciente a otro tenant devuelve 404.</remarks>
     [HttpGet("{id:guid}")]
+    [ProducesResponseType(typeof(SolicitudDetalleDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized, "application/problem+json")]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden, "application/problem+json")]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound, "application/problem+json")]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError, "application/problem+json")]
     public async Task<IActionResult> ObtenerDetalle(
         Guid id,
         CancellationToken cancellationToken)
@@ -111,10 +122,15 @@ public sealed class SolicitudesController(
         return Ok(solicitud);
     }
     
-    // PUT: /api/v1/solicitudes/{id}
-    // Permite modificar una solicitud existente respetando
-    // las reglas de negocio y permisos definidos.
+    /// <summary>Edita una solicitud existente.</summary>
+    /// <remarks>Actualizar categoría o prioridad recalcula el SLA cuando la solicitud no está resuelta.</remarks>
     [HttpPut("{id:guid}")]
+    [ProducesResponseType(typeof(SolicitudDetalleDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized, "application/problem+json")]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden, "application/problem+json")]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound, "application/problem+json")]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity, "application/problem+json")]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError, "application/problem+json")]
     public async Task<IActionResult> Editar(
         Guid id,
         [FromBody] EditarSolicitudRequest request,
@@ -126,10 +142,16 @@ public sealed class SolicitudesController(
         return Ok(solicitud);
     }
     
-    // POST: /api/v1/solicitudes/{id}/transiciones
-    // Ejecuta una acción del flujo de estados
-    // (asignar, iniciar, resolver, cerrar, reabrir o cancelar).
+    /// <summary>Ejecuta una transición del flujo de una solicitud.</summary>
+    /// <remarks>Admite asignar, iniciar, resolver, cerrar, reabrir y cancelar, según el estado y el rol del usuario.</remarks>
     [HttpPost("{id:guid}/transiciones")]
+    [ProducesResponseType(typeof(SolicitudDetalleDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized, "application/problem+json")]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden, "application/problem+json")]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound, "application/problem+json")]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict, "application/problem+json")]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity, "application/problem+json")]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError, "application/problem+json")]
     public async Task<IActionResult> Transicionar(
         Guid id,
         [FromBody] TransicionSolicitudRequest request,

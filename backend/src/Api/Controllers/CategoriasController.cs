@@ -1,4 +1,5 @@
 using Aplicacion.Abstracciones;
+using Aplicacion.DTOs.Categorias;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,9 +12,12 @@ namespace Api.Controllers;
 public sealed class CategoriasController(
     ICategoriaConsultaService categoriaConsultaService) : ControllerBase
 {
-    // Devuelve las categorías activas pertenecientes a la organización
-    // del usuario autenticado.
+    /// <summary>Lista las categorías activas de la organización actual.</summary>
+    /// <remarks>La respuesta se limita al tenant indicado en el token JWT.</remarks>
     [HttpGet]
+    [ProducesResponseType(typeof(IReadOnlyList<CategoriaDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized, "application/problem+json")]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError, "application/problem+json")]
     public async Task<IActionResult> Listar(CancellationToken cancellationToken)
     {
         // Obtiene las categorías activas desde la capa de aplicación.

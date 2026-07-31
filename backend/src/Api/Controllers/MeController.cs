@@ -1,4 +1,5 @@
 using Aplicacion.Abstracciones;
+using Aplicacion.DTOs.Autenticacion;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,8 +14,12 @@ public sealed class MeController(
     IUsuarioActual usuarioActual)
     : ControllerBase
 {
-     // Devuelve el perfil asociado al token enviado en la petición.
+    /// <summary>Obtiene el perfil del usuario autenticado.</summary>
+    /// <remarks>Devuelve los datos de sesión asociados al token JWT enviado.</remarks>
     [HttpGet]
+    [ProducesResponseType(typeof(UsuarioSesionDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized, "application/problem+json")]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError, "application/problem+json")]
     public async Task<IActionResult> Get(CancellationToken cancellationToken)
     {
         // Obtiene la información del usuario desde los claims del JWT.

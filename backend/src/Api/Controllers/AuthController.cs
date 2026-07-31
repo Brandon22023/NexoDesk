@@ -1,5 +1,6 @@
 using Aplicacion.Abstracciones;
 using Aplicacion.DTOs.Autenticacion;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -9,9 +10,14 @@ namespace Api.Controllers;
 public sealed class AuthController(IAutenticacionService autenticacionService)
     : ControllerBase
 {
-    // Valida las credenciales del usuario y, si son correctas,
-    // devuelve la información del usuario junto con un token JWT.
+    /// <summary>Inicia sesión y genera un token JWT.</summary>
+    /// <remarks>Este endpoint es público. Las credenciales inválidas devuelven el formato de error del contrato.</remarks>
     [HttpPost("login")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized, "application/problem+json")]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity, "application/problem+json")]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError, "application/problem+json")]
     public async Task<IActionResult> Login(
         [FromBody] LoginRequest request,
         CancellationToken cancellationToken)

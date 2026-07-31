@@ -1,6 +1,7 @@
 using System.Text;
 using Api.Middleware;
 using Api.Servicios;
+using Api.Swagger;
 using Aplicacion.Abstracciones;
 using Infraestructura.Autenticacion;
 using Infraestructura.Persistencia;
@@ -12,6 +13,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 const string FrontendCorsPolicy = "Frontend";
@@ -125,6 +127,13 @@ builder.Services.AddSwaggerGen(options =>
             }
         }] = Array.Empty<string>()
     });
+    options.OperationFilter<PublicEndpointOperationFilter>();
+    options.OperationFilter<ErrorResponseExamplesOperationFilter>();
+    options.SchemaFilter<ProblemDetailsSchemaFilter>();
+
+    var apiXml = Path.Combine(AppContext.BaseDirectory,
+        $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
+    options.IncludeXmlComments(apiXml, includeControllerXmlComments: true);
 });
 
 // Manejo centralizado de errores para evitar respuestas con stack trace
@@ -160,7 +169,7 @@ var app = builder.Build();
 // y se cargan los datos iniciales necesarios para el funcionamiento de la aplicación.
 await ApplyDatabaseChangesAsync(app, databasePath);
 
-app.MapGet("/", () => "Hello World!");
+app.MapGet("/", () => "Hello World!").ExcludeFromDescription();
 
 app.UseExceptionHandler();
 app.UseCors(FrontendCorsPolicy);

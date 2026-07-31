@@ -1,3 +1,5 @@
+using Api.Contratos.Health;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -6,12 +8,21 @@ namespace Api.Controllers;
 [ApiController]
 public sealed class HealthController : ControllerBase
 {   
-    // Devuelve el estado actual del servicio.
-    [HttpGet("/api/v1/health")]
+    /// <summary>Consulta el estado del servicio.</summary>
+    /// <remarks>Endpoint público utilizado por los health checks.</remarks>
     [HttpGet("/health")]
-    public IActionResult Get()
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(HealthResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError, "application/problem+json")]
+    public ActionResult<HealthResponse> Get()
     {
         // Respuesta simple utilizada por healthchecks y monitoreo.
-        return Ok(new { estado = "ok" });
+        return Ok(new HealthResponse("ok"));
     }
+
+    // Ruta heredada conservada para clientes existentes; no forma parte del contrato OpenAPI.
+    [HttpGet("/api/v1/health")]
+    [AllowAnonymous]
+    [ApiExplorerSettings(IgnoreApi = true)]
+    public ActionResult<HealthResponse> GetVersionado() => Get();
 }

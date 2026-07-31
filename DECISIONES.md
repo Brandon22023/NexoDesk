@@ -43,3 +43,25 @@ La parte más difícil fue asegurar que la solución cumpliera exactamente con t
 
 Lo resolví revisando varias veces la especificación, probando distintos escenarios y apoyándome en herramientas de IA para contrastar ideas y verificar que cada funcionalidad se comportara como se esperaba.
 
+# Aspectos que requirieron validación adicional
+
+## RN-04 — Cálculo de SLA
+
+Fue una de las reglas que más tuve que revisar durante el desarrollo para asegurarme de que la estaba aplicando correctamente.
+
+Entendí que el tiempo límite depende de la prioridad de la solicitud:
+
+Baja: 72 horas
+Media: 24 horas
+Alta: 4 horas
+
+Sin embargo, en varias ocasiones volví a consultar la especificación para confirmar que no estaba olvidando alguna condición adicional y que el cálculo se realizaba exactamente como se indicaba en los requisitos.
+
+Finalmente, se implementó sumando a la fecha de creación las horas correspondientes según la prioridad seleccionad
+
+
+## RN-02 — Máquina de estados
+
+La idea general de los estados y sus cambios la entendí desde el inicio. Sin embargo, en algunos momentos tuve que volver a revisar la especificación para confirmar qué transiciones estaban permitidas y cuáles no.
+
+Esto me ayudó a verificar que estaba aplicando correctamente las reglas definidas y que no estaba permitiendo cambios de estado que no correspondían.
