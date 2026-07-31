@@ -4,8 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infraestructura.Persistencia.Configuraciones;
 
+/// Configuración de Entity Framework para la entidad Categoria.
 public sealed class CategoriaConfiguration : IEntityTypeConfiguration<Categoria>
 {
+        /// Configura el mapeo de la entidad, sus restricciones,
+    /// relaciones e índices en la base de datos.
     public void Configure(EntityTypeBuilder<Categoria> builder)
     {
         builder.ToTable(

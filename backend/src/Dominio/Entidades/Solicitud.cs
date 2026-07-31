@@ -2,8 +2,11 @@ using Dominio.Enums;
 
 namespace Dominio.Entidades;
 
+/// Entidad que representa una solicitud de soporte, incluyendo
+/// su información, estado y reglas de negocio para su ciclo de vida.
 public sealed class Solicitud
 {
+    // Constructor requerido por Entity Framework.
     private Solicitud()
     {
     }

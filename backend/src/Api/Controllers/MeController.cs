@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
+// Controlador que permite consultar la información del usuario autenticado.
 [ApiController]
 [Authorize]
 [Route("api/v1/me")]
@@ -12,11 +13,14 @@ public sealed class MeController(
     IUsuarioActual usuarioActual)
     : ControllerBase
 {
+     // Devuelve el perfil asociado al token enviado en la petición.
     [HttpGet]
     public async Task<IActionResult> Get(CancellationToken cancellationToken)
     {
+        // Obtiene la información del usuario desde los claims del JWT.
         var contexto = usuarioActual.Obtener();
-
+        
+        // Si los claims requeridos no existen, el token no es válido.
         if (contexto is null)
         {
             return Problem(
@@ -28,12 +32,14 @@ public sealed class MeController(
                     ["codigo"] = "NO_AUTENTICADO"
                 });
         }
-
+         // Busca el usuario dentro de la organización indicada por el token.
         var usuario = await autenticacionService.ObtenerUsuarioAsync(
             contexto.UsuarioId,
             contexto.TenantId,
             cancellationToken);
-
+        
+        // El usuario puede haber sido desactivado o eliminado después
+        // de que el token fue emitido.
         if (usuario is null)
         {
             return Problem(

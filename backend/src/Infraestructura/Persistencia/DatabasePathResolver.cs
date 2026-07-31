@@ -1,9 +1,11 @@
 namespace Infraestructura.Persistencia;
 
+/// Proporciona utilidades para resolver la ubicación de la base de datos.
 public static class DatabasePathResolver
 {
     private const string DatabaseFileName = "mesasitec.db";
 
+    /// Obtiene la ruta de la base de datos a partir de un directorio inicial.
     public static string Resolve(string startPath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(startPath);
@@ -28,7 +30,7 @@ public static class DatabasePathResolver
 
         return BuildDatabasePath(Path.GetFullPath(startPath));
     }
-
+    /// Garantiza que exista el directorio donde se almacenará la base de datos.
     public static void EnsureDirectoryExists(string databasePath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(databasePath);
@@ -39,7 +41,7 @@ public static class DatabasePathResolver
 
         Directory.CreateDirectory(dataDirectory);
     }
-
+    /// Construye la ruta completa de la base de datos.
     private static string BuildDatabasePath(string backendRoot)
     {
         return Path.Combine(backendRoot, "data", DatabaseFileName);

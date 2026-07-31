@@ -7,6 +7,7 @@ const authStore = useAuthStore()
 const router = useRouter()
 
 async function logout(): Promise<void> {
+  // Al cerrar sesión se vuelve al acceso para que otra persona no pueda continuar con esta identidad.
   authStore.signOut()
   await router.replace({ name: 'login' })
 }

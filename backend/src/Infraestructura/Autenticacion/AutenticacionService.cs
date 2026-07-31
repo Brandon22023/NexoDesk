@@ -11,12 +11,16 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Infraestructura.Autenticacion;
 
+/// Servicio encargado de autenticar usuarios, validar credenciales
+/// y generar tokens JWT para las sesiones.
 public sealed class AutenticacionService(
     AppDbContext db,
     IOptions<JwtOptions> options) : IAutenticacionService
 {
     private readonly JwtOptions jwtOptions = options.Value;
 
+    /// Valida las credenciales del usuario y genera la información
+    /// necesaria para iniciar sesión.
     public async Task<LoginResponse?> IniciarSesionAsync(
         LoginRequest request,
         CancellationToken cancellationToken = default)
@@ -41,7 +45,8 @@ public sealed class AutenticacionService(
         {
             return null;
         }
-
+         
+        // Actualiza el hash cuando el algoritmo de seguridad lo requiere.
         if (passwordResult == PasswordVerificationResult.SuccessRehashNeeded)
         {
             usuario.ActualizarPasswordHash(
@@ -58,7 +63,8 @@ public sealed class AutenticacionService(
             (int)expiration.TotalSeconds,
             usuarioDto);
     }
-
+    /// Obtiene la información del usuario autenticado dentro
+    /// del tenant correspondiente.
     public async Task<UsuarioSesionDto?> ObtenerUsuarioAsync(
         Guid usuarioId,
         Guid tenantId,
@@ -75,7 +81,7 @@ public sealed class AutenticacionService(
             ? null
             : ToDto(usuario);
     }
-
+    /// Genera un token JWT con los datos y permisos del usuario.
     private string CreateToken(UsuarioSesionDto usuario, TimeSpan expiration)
     {
         if (string.IsNullOrWhiteSpace(jwtOptions.JwtSecret)
@@ -105,7 +111,8 @@ public sealed class AutenticacionService(
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-
+    /// Convierte la entidad de usuario en un DTO con la información
+    /// necesaria para la sesión.
     private static UsuarioSesionDto ToDto(Dominio.Entidades.Usuario usuario)
     {
         return new UsuarioSesionDto(

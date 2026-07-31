@@ -1,5 +1,7 @@
 namespace Dominio.Entidades;
 
+/// Entidad que representa una categoría de solicitudes,
+/// incluyendo el tiempo de SLA configurado.
 public sealed class Categoria
 {
     private Categoria()

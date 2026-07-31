@@ -4,8 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infraestructura.Persistencia.Configuraciones;
 
+/// Configura el mapeo de la entidad <see cref="Tenant"/> en la base de datos.
 public sealed class TenantConfiguration : IEntityTypeConfiguration<Tenant>
 {
+
+        /// Define la configuración de la entidad <see cref="Tenant"/>.
     public void Configure(EntityTypeBuilder<Tenant> builder)
     {
         builder.ToTable("Tenants");

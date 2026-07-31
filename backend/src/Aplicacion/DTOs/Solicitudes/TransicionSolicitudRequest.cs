@@ -2,6 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Aplicacion.DTOs.Solicitudes;
 
+/// DTO utilizado para solicitar un cambio de estado o transición
+/// de una solicitud.
 public sealed class TransicionSolicitudRequest
 {
     [Required]

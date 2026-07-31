@@ -4,8 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infraestructura.Persistencia.Configuraciones;
 
+/// Configura el mapeo de la entidad <see cref="Usuario"/> en la base de datos.
 public sealed class UsuarioConfiguration : IEntityTypeConfiguration<Usuario>
 {
+
+        /// Define la configuración de la entidad usuario, incluyendo sus propiedades, relaciones e índices.
     public void Configure(EntityTypeBuilder<Usuario> builder)
     {
         builder.ToTable("Usuarios");

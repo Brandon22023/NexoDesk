@@ -33,9 +33,12 @@ const errorMessage = ref('')
 const selectedAction = ref<AccionSolicitud | null>(null)
 const actionSubmitting = ref(false)
 const actionError = ref('')
+// La ruta determina el detalle que la persona está consultando.
 const solicitudId = computed(() => String(route.params.id))
+// La identidad de la sesión define qué acciones se pueden mostrar en este detalle.
 const usuario = computed(() => authStore.usuario)
 
+// Un solicitante solo puede editar solicitudes nuevas creadas por él; los demás roles pueden gestionar las de su organización.
 const canEdit = computed(() => {
   if (!solicitud.value || !usuario.value) return false
   if (usuario.value.rol === 'Admin' || usuario.value.rol === 'Agente') return true
@@ -44,6 +47,7 @@ const canEdit = computed(() => {
 })
 
 const availableActions = computed(() => {
+  // Los botones que no aplican al estado o al rol no se renderizan porque el usuario no debe poder iniciar esas acciones.
   if (!solicitud.value || !usuario.value) return []
   return STATE_ACTIONS[solicitud.value.estado].filter((action) => {
     if (usuario.value?.rol === 'Admin') return true
@@ -59,10 +63,12 @@ const dateFormatter = new Intl.DateTimeFormat('es-GT', {
 })
 
 function formatDate(value: string | null): string {
+  // Las fechas se presentan en el formato local para facilitar el seguimiento de los compromisos SLA.
   return value ? dateFormatter.format(new Date(value)) : 'No registrada'
 }
 
 function actionLabel(action: AccionSolicitud): string {
+  // Cada acción técnica se traduce a un texto claro antes de mostrarse en botones y confirmaciones.
   const labels: Record<AccionSolicitud, string> = {
     asignar: 'Asignar',
     iniciar: 'Iniciar',
@@ -75,6 +81,7 @@ function actionLabel(action: AccionSolicitud): string {
 }
 
 async function load(): Promise<void> {
+  // El detalle se consulta desde el servidor para reflejar el estado y permisos vigentes de la solicitud.
   loading.value = true
   errorMessage.value = ''
   try {
@@ -89,11 +96,13 @@ async function load(): Promise<void> {
 }
 
 function openAction(action: AccionSolicitud): void {
+  // La acción se confirma en un modal porque algunas transiciones requieren agente o motivo.
   selectedAction.value = action
   actionError.value = ''
 }
 
 async function confirmAction(request: TransicionSolicitudRequest): Promise<void> {
+  // Después de una transición se reemplaza el detalle para mostrar el estado resultante sin recargar la página.
   actionSubmitting.value = true
   actionError.value = ''
   try {
@@ -109,6 +118,7 @@ async function confirmAction(request: TransicionSolicitudRequest): Promise<void>
   }
 }
 
+// El detalle se prepara al entrar para evaluar las acciones permitidas con el estado más reciente.
 onMounted(() => void load())
 </script>
 

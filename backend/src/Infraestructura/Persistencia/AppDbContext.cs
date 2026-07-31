@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infraestructura.Persistencia;
 
+/// Representa el contexto de acceso a la base de datos de la aplicación.
 public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
     : DbContext(options)
 {

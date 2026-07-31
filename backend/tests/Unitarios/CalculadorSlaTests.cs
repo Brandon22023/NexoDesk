@@ -3,8 +3,13 @@ using Dominio.Reglas;
 
 namespace Unitarios;
 
+// Pruebas de la regla RN-04:
+// cálculo del SLA según la prioridad y detección de vencimiento.
 public sealed class CalculadorSlaTests
 {
+
+    // Fecha fija para que las pruebas sean repetibles
+    // sin depender de la fecha actual del sistema.
     private static readonly DateTime FechaCreacion = new(2026, 1, 15, 8, 0, 0, DateTimeKind.Utc);
 
     [Theory]
@@ -15,7 +20,9 @@ public sealed class CalculadorSlaTests
     public void CalcularFechaLimite_AplicaElFactorDePrioridad(
         PrioridadSolicitud prioridad,
         int horasEsperadas)
-    {
+    {   
+        // Verifica que el servidor calcule la fecha límite
+        // aplicando el factor correspondiente a cada prioridad.
         var limite = CalculadorSla.CalcularFechaLimite(
             FechaCreacion,
             slaHoras: 8,
@@ -26,7 +33,9 @@ public sealed class CalculadorSlaTests
 
     [Fact]
     public void EstaVencida_CuandoLaSolicitudActivaSuperoElLimite_DevuelveVerdadero()
-    {
+    {   
+        // Una solicitud activa se considera vencida cuando
+        // la fecha límite ya fue superada.
         var vencida = CalculadorSla.EstaVencida(
             FechaCreacion.AddHours(-1),
             EstadoSolicitud.EnProceso,
@@ -42,6 +51,8 @@ public sealed class CalculadorSlaTests
     public void EstaVencida_CuandoLaSolicitudEstaFinalizada_DevuelveFalso(
         EstadoSolicitud estado)
     {
+        // Los estados finales no se consideran vencidos,
+        // aunque la fecha límite haya pasado.
         var vencida = CalculadorSla.EstaVencida(
             FechaCreacion.AddHours(-1),
             estado,

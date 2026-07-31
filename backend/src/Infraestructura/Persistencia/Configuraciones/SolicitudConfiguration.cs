@@ -4,8 +4,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infraestructura.Persistencia.Configuraciones;
 
+/// Configuración de Entity Framework para la entidad Solicitud.
 public sealed class SolicitudConfiguration : IEntityTypeConfiguration<Solicitud>
 {
+
+        /// Configura el mapeo, las restricciones, relaciones e índices
+    /// de las solicitudes en la base de datos.
     public void Configure(EntityTypeBuilder<Solicitud> builder)
     {
         builder.ToTable(

@@ -67,9 +67,11 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
+  // El guard protege las pantallas internas y evita que una sesión vencida acceda a información de la organización.
   const authStore = useAuthStore(pinia)
 
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    // Se guarda el destino para que la persona retome la pantalla solicitada después de iniciar sesión.
     return {
       name: 'login',
       query: { redirect: to.fullPath },
@@ -84,6 +86,7 @@ router.beforeEach((to) => {
 })
 
 router.afterEach((to) => {
+  // El título cambia con la pantalla para que la navegación sea clara entre varias pestañas.
   document.title = typeof to.meta.title === 'string'
     ? to.meta.title
     : 'MesaSitec'

@@ -22,11 +22,15 @@ const emit = defineEmits<{
 const agenteId = ref(props.usuario.id)
 const motivo = ref('')
 const attempted = ref(false)
+// Asignar requiere identificar a quién asumirá la atención de la solicitud.
 const requiresAgent = computed(() => props.accion === 'asignar')
+// Resolver y cancelar requieren una justificación mínima para dejar evidencia útil para la organización.
 const requiresReason = computed(
   () => props.accion === 'resolver' || props.accion === 'cancelar',
 )
+// La longitud mínima cambia según la evidencia que exige cada cierre de la solicitud.
 const minimumReasonLength = computed(() => props.accion === 'resolver' ? 20 : 10)
+// El título explica con claridad la transición que la persona está a punto de confirmar.
 const title = computed(() => {
   const labels: Record<AccionSolicitud, string> = {
     asignar: 'Asignar solicitud',
@@ -39,6 +43,7 @@ const title = computed(() => {
   return labels[props.accion]
 })
 const validationError = computed(() => {
+  // La validación se muestra después del intento para guiar la acción sin bloquear la lectura inicial del modal.
   if (!attempted.value) return ''
   if (requiresAgent.value && !agenteId.value) return 'Selecciona un agente.'
   if (
@@ -51,6 +56,7 @@ const validationError = computed(() => {
 })
 
 function confirm(): void {
+  // El modal reúne solo los datos exigidos por cada transición antes de solicitar el cambio de estado.
   attempted.value = true
   if (validationError.value) return
 
@@ -62,10 +68,13 @@ function confirm(): void {
 }
 
 function handleKeydown(event: KeyboardEvent): void {
+  // Escape permite cerrar el modal mientras no haya una acción en curso que pueda quedar ambigua.
   if (event.key === 'Escape' && !props.isSubmitting) emit('close')
 }
 
+// Escape está disponible solo mientras el modal permanece visible.
 onMounted(() => document.addEventListener('keydown', handleKeydown))
+// El atajo se retira al cerrar el modal para no afectar otras pantallas.
 onBeforeUnmount(() => document.removeEventListener('keydown', handleKeydown))
 </script>
 

@@ -1,5 +1,7 @@
 namespace Aplicacion.DTOs.Solicitudes;
 
+
+/// DTO que contiene la información detallada de una solicitud.
 public sealed record SolicitudDetalleDto(
     Guid Id,
     string Codigo,

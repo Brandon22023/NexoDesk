@@ -19,7 +19,9 @@ const loading = ref(true)
 const submitting = ref(false)
 const errorMessage = ref('')
 const serverError = ref('')
+// La ruta identifica qué solicitud se debe consultar y actualizar en esta pantalla.
 const solicitudId = computed(() => String(route.params.id))
+// El formulario se llena con el detalle actual para conservar los datos que no se desean modificar.
 const initialValue = computed<SolicitudFormData | null>(() => solicitud.value
   ? {
       titulo: solicitud.value.titulo,
@@ -30,6 +32,7 @@ const initialValue = computed<SolicitudFormData | null>(() => solicitud.value
   : null)
 
 async function load(): Promise<void> {
+  // El detalle y las categorías se cargan juntos para que solo se edite información válida para la organización.
   loading.value = true
   errorMessage.value = ''
   try {
@@ -49,6 +52,7 @@ async function load(): Promise<void> {
 }
 
 async function update(data: SolicitudFormData): Promise<void> {
+  // Al guardar se vuelve al detalle actualizado, donde la persona puede confirmar el nuevo SLA o estado.
   submitting.value = true
   serverError.value = ''
   try {
@@ -64,6 +68,7 @@ async function update(data: SolicitudFormData): Promise<void> {
   }
 }
 
+// La pantalla carga el detalle actual al abrirse para que la edición parta de información vigente.
 onMounted(() => void load())
 </script>
 

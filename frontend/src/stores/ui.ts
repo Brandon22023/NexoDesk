@@ -9,6 +9,7 @@ interface ToastMessage {
 }
 
 export const useUiStore = defineStore('ui', () => {
+  // Los avisos se comparten entre pantallas para confirmar acciones sin interrumpir el trabajo.
   const toast = ref<ToastMessage | null>(null)
   let dismissTimer: number | null = null
 
@@ -17,6 +18,7 @@ export const useUiStore = defineStore('ui', () => {
     tone: ToastTone = 'success',
     duration = 4_000,
   ): void {
+    // Un nuevo aviso reemplaza al anterior para que la persona vea siempre el resultado más reciente.
     toast.value = { text, tone }
 
     if (dismissTimer !== null) {
@@ -30,6 +32,7 @@ export const useUiStore = defineStore('ui', () => {
   }
 
   function dismissToast(): void {
+    // El aviso puede cerrarse manualmente antes de que termine su tiempo de lectura.
     toast.value = null
     if (dismissTimer !== null) {
       window.clearTimeout(dismissTimer)

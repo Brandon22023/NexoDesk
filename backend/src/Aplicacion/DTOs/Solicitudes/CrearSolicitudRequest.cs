@@ -2,6 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Aplicacion.DTOs.Solicitudes;
 
+// Datos necesarios para crear una nueva solicitud.
+// El SLA y fechas relacionadas son calculados por el servidor.
 public sealed class CrearSolicitudRequest
 {
     // RN-04: fechaLimiteSla no forma parte del contrato; el servidor la calcula.

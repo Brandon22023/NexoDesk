@@ -34,16 +34,20 @@ const showPassword = ref(false)
 const hasSubmitted = ref(false)
 const recoveryHint = ref('')
 
+// La validación aparece tras el primer intento para no mostrar errores antes de que la persona interactúe.
+// El correo debe tener un formato básico antes de intentar autenticar a la persona.
 const emailIsValid = computed(() =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value),
 )
 
+// El mensaje de correo se muestra solo después de que la persona intentó continuar.
 const emailError = computed(() =>
   hasSubmitted.value && !emailIsValid.value
     ? 'Ingresa un correo electrónico válido.'
     : '',
 )
 
+// La contraseña se exige antes de enviar el acceso para evitar un intento incompleto.
 const passwordError = computed(() =>
   hasSubmitted.value && password.value.length === 0
     ? 'Ingresa tu contraseña para continuar.'
@@ -51,11 +55,13 @@ const passwordError = computed(() =>
 )
 
 watch([email, password], () => {
+  // Al modificar las credenciales se limpia el resultado del intento anterior para evitar mensajes desactualizados.
   recoveryHint.value = ''
   emit('clearFeedback')
 })
 
 function handleSubmit(): void {
+  // El formulario evita enviar datos incompletos y entrega las credenciales limpias a la pantalla de acceso.
   hasSubmitted.value = true
   recoveryHint.value = ''
 
@@ -70,6 +76,7 @@ function handleSubmit(): void {
 }
 
 function showRecoveryHint(): void {
+  // No existe recuperación automática; se orienta a la persona hacia el responsable de su organización.
   recoveryHint.value =
     'Solicita el restablecimiento de acceso al administrador de tu organización.'
 }

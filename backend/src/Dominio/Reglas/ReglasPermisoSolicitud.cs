@@ -2,6 +2,8 @@ using Dominio.Enums;
 
 namespace Dominio.Reglas;
 
+/// Contiene las reglas de negocio para determinar los permisos
+/// de los usuarios sobre las solicitudes según su rol.
 public static class ReglasPermisoSolicitud
 {
     /// RN-03: concentra los permisos de solicitudes por rol para que los

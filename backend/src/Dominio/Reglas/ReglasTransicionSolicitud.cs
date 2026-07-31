@@ -1,7 +1,8 @@
 using Dominio.Enums;
 
 namespace Dominio.Reglas;
-
+/// Contiene las reglas de negocio que validan las transiciones
+/// permitidas entre los estados de una solicitud.
 public static class ReglasTransicionSolicitud
 {
 

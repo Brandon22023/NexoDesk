@@ -19,6 +19,7 @@ const errorMessage = ref('')
 const serverError = ref('')
 
 async function loadCategorias(): Promise<void> {
+  // El formulario espera las categorías activas para que la nueva solicitud tenga un SLA válido desde el inicio.
   loading.value = true
   errorMessage.value = ''
 
@@ -34,6 +35,7 @@ async function loadCategorias(): Promise<void> {
 }
 
 async function create(data: SolicitudFormData): Promise<void> {
+  // Tras crear la solicitud se abre su detalle para que la persona pueda seguir su código y estado.
   submitting.value = true
   serverError.value = ''
 
@@ -54,6 +56,7 @@ async function create(data: SolicitudFormData): Promise<void> {
 }
 
 onMounted(() => {
+  // Las categorías se consultan al abrir la pantalla para respetar las opciones activas de la organización.
   void loadCategorias()
 })
 </script>

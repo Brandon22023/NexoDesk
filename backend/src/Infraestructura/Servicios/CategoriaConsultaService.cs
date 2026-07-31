@@ -6,10 +6,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infraestructura.Servicios;
 
+/// Proporciona consultas de categorías para el usuario autenticado.
 public sealed class CategoriaConsultaService(
     AppDbContext db,
     IUsuarioActual usuarioActual) : ICategoriaConsultaService
 {
+
+    /// Obtiene las categorías activas de la organización actual.
     public async Task<IReadOnlyList<CategoriaDto>> ListarActivasAsync(
         CancellationToken cancellationToken = default)
     {

@@ -33,6 +33,7 @@ export class HttpError extends Error {
 export function configureHttpClient(
   nextConfiguration: HttpClientConfiguration,
 ): void {
+  // La aplicación centraliza aquí cómo obtiene la sesión y cómo responde cuando el acceso deja de ser válido.
   configuration = nextConfiguration
 }
 
@@ -40,6 +41,7 @@ export async function httpRequest<T>(
   path: string,
   options: HttpRequestOptions = {},
 ): Promise<T> {
+  // Las solicitudes protegidas incluyen el token actual para que la API aplique permisos y aislamiento por organización.
   const {
     body,
     authenticated = true,
@@ -70,9 +72,11 @@ export async function httpRequest<T>(
   const payload = await readResponseBody(response)
 
   if (!response.ok) {
+    // Los errores del contrato se conservan para mostrar mensajes comprensibles en cada pantalla.
     const problem = isApiProblem(payload) ? payload : undefined
 
     if (response.status === 401 && redirectOnUnauthorized) {
+      // Si la sesión expiró, se redirige al login para evitar acciones con un token inválido.
       configuration.onUnauthorized()
     }
 
@@ -87,6 +91,7 @@ export async function httpRequest<T>(
 }
 
 async function readResponseBody(response: Response): Promise<unknown> {
+  // La respuesta se adapta a su contenido para que cada pantalla pueda mostrar datos o mensajes de error del servidor.
   if (response.status === 204) {
     return undefined
   }
@@ -98,6 +103,7 @@ async function readResponseBody(response: Response): Promise<unknown> {
 }
 
 function isApiProblem(value: unknown): value is ApiProblem {
+  // Solo se tratan como errores de negocio las respuestas que respetan el formato esperado por la interfaz.
   if (typeof value !== 'object' || value === null) {
     return false
   }

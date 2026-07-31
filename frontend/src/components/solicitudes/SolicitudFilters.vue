@@ -14,14 +14,17 @@ const emit = defineEmits<{
 }>()
 
 function update(patch: Partial<FiltrosSolicitudes>): void {
+  // Cada cambio conserva los demás filtros para que la persona pueda acotar el listado paso a paso.
   emit('update:modelValue', { ...props.modelValue, ...patch })
 }
 
 function getValue(event: Event): string {
+  // Los controles comparten esta lectura para aplicar filtros sin repetir decisiones de interfaz.
   return (event.target as HTMLInputElement).value
 }
 
 function updateVencidas(event: Event): void {
+  // El filtro de SLA distingue entre no aplicar criterio y elegir explícitamente solicitudes vencidas o en plazo.
   const value = getValue(event)
   update({ vencidas: value === '' ? null : value === 'true' })
 }

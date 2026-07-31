@@ -20,6 +20,9 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
+
+// La base de datos SQLite se resuelve según el entorno.
+// En Docker utiliza el volumen configurado para conservar los datos.
 var databasePath = DatabasePathResolver.Resolve(
     builder.Environment.ContentRootPath);
 DatabasePathResolver.EnsureDirectoryExists(databasePath);
@@ -30,11 +33,17 @@ var connectionString = new SqliteConnectionStringBuilder
     ForeignKeys = true
 }.ToString();
 
+
+// EF Core administra la persistencia mediante SQLite y aplica
+// migraciones automáticamente al iniciar la aplicación.
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(
         connectionString,
         sqliteOptions => sqliteOptions.MigrationsAssembly(
             typeof(AppDbContext).Assembly.FullName)));
+
+// Registro de servicios de aplicación.
+// Los controllers consumen abstracciones y no implementaciones concretas.
 
 builder.Services.Configure<JwtOptions>(
     builder.Configuration.GetSection(JwtOptions.SectionName));
@@ -45,6 +54,9 @@ builder.Services.AddScoped<ISolicitudConsultaService, SolicitudConsultaService>(
 builder.Services.AddScoped<ISolicitudService, SolicitudService>();
 builder.Services.AddScoped<ICategoriaConsultaService, CategoriaConsultaService>();
 
+
+// Configuración de autenticación mediante JWT.
+// El token contiene la identidad del usuario y el tenant al que pertenece.
 var jwtSecret = builder.Configuration["Authentication:JwtSecret"] ?? string.Empty;
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -63,6 +75,9 @@ builder.Services
         };
     });
 builder.Services.AddAuthorization();
+
+// CORS permite que el frontend pueda comunicarse con la API
+// únicamente desde los orígenes configurados.
 var corsAllowedOrigins = (builder.Configuration["Cors:AllowedOrigins"]
         ?? string.Empty)
     .Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
@@ -73,6 +88,9 @@ if (corsAllowedOrigins.Length == 0)
         "Cors:AllowedOrigins debe incluir al menos un origen permitido.");
 }
 
+
+// Configuración de Swagger con autenticación Bearer
+// para poder probar endpoints protegidos con JWT.
 builder.Services.AddCors(options =>
     options.AddPolicy(FrontendCorsPolicy, policy =>
         policy.WithOrigins(corsAllowedOrigins)
@@ -109,9 +127,14 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+// Manejo centralizado de errores para evitar respuestas con stack trace
+// y mantener un formato uniforme para la API.
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ManejadorExcepciones>();
 builder.Services.AddControllers();
+
+// Personalización de errores de validación para cumplir el contrato
+// de respuestas definido por la aplicación.
 builder.Services.Configure<ApiBehaviorOptions>(options =>
     options.InvalidModelStateResponseFactory = context =>
     {
@@ -133,7 +156,8 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     });
 
 var app = builder.Build();
-
+// Al iniciar la aplicación se crean las tablas pendientes
+// y se cargan los datos iniciales necesarios para el funcionamiento de la aplicación.
 await ApplyDatabaseChangesAsync(app, databasePath);
 
 app.MapGet("/", () => "Hello World!");
@@ -151,6 +175,8 @@ app.UseAuthorization();
 app.MapControllers();
 await app.RunAsync();
 
+// Ejecuta migraciones y seed de forma automática.
+// Esto permite levantar el proyecto sin pasos manuales adicionales.
 static async Task ApplyDatabaseChangesAsync(
     WebApplication app,
     string databasePath)

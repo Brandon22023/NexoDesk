@@ -1,3 +1,4 @@
+// Estos valores reflejan el contrato del backend y mantienen alineados filtros, formularios y acciones visibles.
 export const ESTADOS_SOLICITUD = [
   'Nueva',
   'Asignada',

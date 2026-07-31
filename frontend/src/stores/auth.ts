@@ -11,17 +11,22 @@ import type {
 const SESSION_KEY = 'mesasitec.auth.session'
 
 export const useAuthStore = defineStore('auth', () => {
+  // La sesión vive solo durante la pestaña actual para no conservar el acceso en equipos compartidos.
   const session = ref<AuthSession | null>(readSession())
   let expirationTimer: number | null = null
 
+  // El token se expone de forma controlada para autorizar las llamadas protegidas de la aplicación.
   const accessToken = computed(() => session.value?.accessToken ?? null)
+  // La identidad actual permite adaptar la interfaz al rol y a la organización de la persona.
   const usuario = computed<UsuarioSesion | null>(
     () => session.value?.usuario ?? null,
   )
+  // El acceso solo es válido mientras la sesión exista y no haya vencido.
   const isAuthenticated = computed(
     () => session.value !== null && session.value.expiresAt > Date.now(),
   )
 
+  // Al ingresar se conserva la identidad y el vencimiento para aplicar permisos sin volver a autenticar en cada pantalla.
   async function signIn(
     credentials: LoginCredentials,
     signal?: AbortSignal,
@@ -40,6 +45,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   function signOut(): void {
+    // Cerrar sesión elimina los datos locales para que nadie reutilice el acceso anterior.
     session.value = null
     sessionStorage.removeItem(SESSION_KEY)
     if (expirationTimer !== null) {
@@ -49,6 +55,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   function scheduleExpiration(expiresAt: number): void {
+    // La sesión se cierra al vencer aunque la persona permanezca en la misma pantalla.
     if (expirationTimer !== null) {
       window.clearTimeout(expirationTimer)
     }
@@ -60,6 +67,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   if (session.value) {
+    // Una sesión recuperada también respeta su hora de vencimiento original.
     scheduleExpiration(session.value.expiresAt)
   }
 
@@ -73,6 +81,7 @@ export const useAuthStore = defineStore('auth', () => {
 })
 
 function readSession(): AuthSession | null {
+  // Solo se recuperan sesiones completas y vigentes para evitar mostrar datos de una identidad inválida.
   const rawSession = sessionStorage.getItem(SESSION_KEY)
 
   if (!rawSession) {
@@ -95,6 +104,7 @@ function readSession(): AuthSession | null {
 }
 
 function isAuthSession(value: unknown): value is AuthSession {
+  // La sesión guardada debe tener toda la identidad necesaria antes de restaurar el acceso de la persona.
   if (typeof value !== 'object' || value === null) {
     return false
   }

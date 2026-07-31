@@ -2,11 +2,16 @@ using Dominio.Enums;
 
 namespace Dominio.Entidades;
 
+
+/// Entidad que representa un usuario del sistema, incluyendo
+/// su información de autenticación y rol.
 public sealed class Usuario
 {
     private Usuario()
     {
     }
+    
+    // Inicializa un nuevo usuario.
 
     public Usuario(
         Guid id,

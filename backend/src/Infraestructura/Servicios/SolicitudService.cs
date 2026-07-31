@@ -10,10 +10,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infraestructura.Servicios;
 
+/// Gestiona la creación, consulta, edición y transición de solicitudes.
 public sealed class SolicitudService(
     AppDbContext db,
     IUsuarioActual usuarioActual) : ISolicitudService
 {
+    /// Crea una nueva solicitud para el usuario autenticado.
     public async Task<SolicitudDetalleDto> CrearAsync(
         CrearSolicitudRequest request,
         CancellationToken cancellationToken = default)
@@ -47,6 +49,7 @@ public sealed class SolicitudService(
         return await ObtenerDetalleAsync(solicitud.Id, cancellationToken);
     }
 
+/// Obtiene el detalle de una solicitud accesible para el usuario actual.
     public async Task<SolicitudDetalleDto> ObtenerDetalleAsync(
         Guid solicitudId,
         CancellationToken cancellationToken = default)
@@ -82,6 +85,7 @@ public sealed class SolicitudService(
 
         return ToDetalle(solicitud, DateTime.UtcNow);
     }
+    /// Edita una solicitud cuando el usuario tiene permiso.
 
     public async Task<SolicitudDetalleDto> EditarAsync(
         Guid solicitudId,
@@ -122,7 +126,7 @@ public sealed class SolicitudService(
         await db.SaveChangesAsync(cancellationToken);
         return await ObtenerDetalleAsync(solicitud.Id, cancellationToken);
     }
-
+    /// Ejecuta una transición de estado sobre una solicitud.
     public async Task<SolicitudDetalleDto> TransicionarAsync(
         Guid solicitudId,
         TransicionSolicitudRequest request,
@@ -159,12 +163,14 @@ public sealed class SolicitudService(
         await db.SaveChangesAsync(cancellationToken);
         return await ObtenerDetalleAsync(solicitud.Id, cancellationToken);
     }
+    /// Obtiene el contexto del usuario autenticado.
     private ContextoUsuarioActual ObtenerContexto()
     {
         return usuarioActual.Obtener()
             ?? throw new InvalidOperationException(
                 "No fue posible obtener el usuario autenticado.");
     }
+    /// Obtiene una categoría activa perteneciente al tenant indicado.
 
     private async Task<Categoria> ObtenerCategoriaAsync(
         Guid categoriaId,
@@ -185,6 +191,7 @@ public sealed class SolicitudService(
                 ["La categoría debe estar activa y pertenecer a la organización."]
             });
     }
+    /// Obtiene una solicitud perteneciente al tenant indicado.
 
     private async Task<Solicitud> ObtenerSolicitudTenantAsync(
         Guid solicitudId,
@@ -200,7 +207,7 @@ public sealed class SolicitudService(
         return solicitud ?? throw new RecursoNoEncontradoException(
             "La solicitud no existe.");
     }
-
+     /// Convierte una prioridad textual en su valor enumerado.
     private static PrioridadSolicitud ParsePrioridad(string value)
     {
         if (Enum.TryParse<PrioridadSolicitud>(
@@ -219,6 +226,7 @@ public sealed class SolicitudService(
                 ["prioridad"] = ["Valores permitidos: Baja, Media, Alta o Critica."]
             });
     }
+    /// Convierte una acción textual en su valor enumerado.
 
     private static AccionSolicitud ParseAccion(string value)
     {
@@ -239,6 +247,7 @@ public sealed class SolicitudService(
                 ["Valores permitidos: asignar, iniciar, resolver, cerrar, reabrir o cancelar."]
             });
     }
+    /// Valida y normaliza el motivo de una transición.
 
     private static string ValidarMotivo(string? motivo, int minimo)
     {
@@ -252,7 +261,8 @@ public sealed class SolicitudService(
 
         return motivo.Trim();
     }
-
+    
+    /// Aplica una transición válida sobre una solicitud.
     private async Task AplicarTransicionAsync(
         Solicitud solicitud,
         AccionSolicitud accion,
@@ -289,6 +299,7 @@ public sealed class SolicitudService(
                 throw new ArgumentOutOfRangeException(nameof(accion));
         }
     }
+    /// Valida que el agente pueda ser asignado a la solicitud.
 
     private async Task<Guid> ValidarAgenteAsync(
         Guid? agenteId,
@@ -320,6 +331,7 @@ public sealed class SolicitudService(
         return agenteId.Value;
     }
 
+/// Genera el siguiente código correlativo para una solicitud.
     private async Task<string> GenerarCodigoAsync(
         Guid tenantId,
         int year,
@@ -346,7 +358,7 @@ public sealed class SolicitudService(
         // :00000 mantiene el formato SOL-{año}-{correlativo de cinco dígitos}.
         return $"{prefijo}{correlativo:00000}";
     }
-
+    /// Convierte una solicitud en su DTO de detalle.
     private static SolicitudDetalleDto ToDetalle(
         Solicitud solicitud,
         DateTime ahoraUtc)
@@ -373,6 +385,7 @@ public sealed class SolicitudService(
             solicitud.MotivoCancelacion);
     }
 
+/// Garantiza que una fecha sea tratada como UTC.
     private static DateTime AsUtc(DateTime value) =>
         value.Kind == DateTimeKind.Utc
             ? value

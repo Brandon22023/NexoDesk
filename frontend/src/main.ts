@@ -8,6 +8,7 @@ import { pinia } from './stores/pinia'
 
 const authStore = useAuthStore(pinia)
 
+// Todas las llamadas protegidas comparten la sesión actual y devuelven al login cuando ya no es válida.
 configureHttpClient({
   getAccessToken: () => authStore.accessToken,
   onUnauthorized: () => {

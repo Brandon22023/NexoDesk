@@ -6,11 +6,12 @@ using Infraestructura.Persistencia;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infraestructura.Servicios;
-
+/// Proporciona consultas paginadas de solicitudes para el usuario autenticado.
 public sealed class SolicitudConsultaService(
     AppDbContext db,
     IUsuarioActual usuarioActual) : ISolicitudConsultaService
 {
+     /// Obtiene las solicitudes aplicando filtros, ordenamiento y paginación.
     public async Task<PaginaSolicitudesDto> ListarAsync(
         FiltroSolicitudes filtro,
         CancellationToken cancellationToken = default)
@@ -140,6 +141,7 @@ public sealed class SolicitudConsultaService(
             total,
             totalPaginas);
     }
+    /// Aplica el ordenamiento solicitado a la consulta.
 
     private static IQueryable<Solicitud> AplicarOrden(
         IQueryable<Solicitud> consulta,
@@ -168,13 +170,14 @@ public sealed class SolicitudConsultaService(
                 "Ordenamiento no soportado.")
         };
     }
-
+    /// Garantiza que una fecha sea tratada como UTC.
     private static DateTime AsUtc(DateTime value)
     {
         return value.Kind == DateTimeKind.Utc
             ? value
             : DateTime.SpecifyKind(value, DateTimeKind.Utc);
     }
+    /// Representa una fila interna del listado de solicitudes.
 
     private sealed class SolicitudListaFila
     {

@@ -7,8 +7,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Infraestructura.Persistencia.Seed;
 
+/// Proporciona los datos iniciales para la base de datos.
 public static class SeedData
 {
+
+    /// Inicializa la base de datos con los datos semilla.
     private const string SeedPassword = "Sitec.2026";
     private const string DefaultBaseDate = "2026-01-15T08:00:00Z";
 
@@ -62,7 +65,7 @@ public static class SeedData
             throw;
         }
     }
-
+    /// Obtiene la fecha base utilizada para generar los datos semilla.
     private static DateTime ResolveBaseDate(ILogger logger)
     {
         var configuredValue = Environment.GetEnvironmentVariable("SEED_FECHA_BASE");
@@ -88,7 +91,8 @@ public static class SeedData
             CultureInfo.InvariantCulture,
             DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
     }
-
+    
+    /// Crea los tenants utilizados como datos semilla.
     private static List<Tenant> CreateTenants()
     {
         return
@@ -101,7 +105,7 @@ public static class SeedData
                 "Bufete Sur")
         ];
     }
-
+    /// Crea los usuarios asociados a los tenants iniciales.
     private static List<Usuario> CreateUsers(IReadOnlyList<Tenant> tenants)
     {
         var northTenantId = tenants[0].Id;
@@ -162,7 +166,7 @@ public static class SeedData
 
         return users;
     }
-
+    /// Crea un usuario con los datos indicados.
     private static Usuario CreateUser(
         string id,
         Guid tenantId,
@@ -178,7 +182,7 @@ public static class SeedData
             name,
             role);
     }
-
+    /// Crea las categorías asociadas a los tenants iniciales.
     private static List<Categoria> CreateCategories(
         IReadOnlyList<Tenant> tenants)
     {
@@ -216,7 +220,7 @@ public static class SeedData
 
         return categories;
     }
-
+    /// Crea las solicitudes asociadas a los tenants iniciales.
     private static List<Solicitud> CreateRequests(
         DateTime baseDate,
         IReadOnlyList<Tenant> tenants,
@@ -263,7 +267,7 @@ public static class SeedData
 
         return requests;
     }
-
+    /// Agrega solicitudes de prueba para un tenant.
     private static void AddTenantRequests(
         ICollection<Solicitud> requests,
         Tenant tenant,
@@ -334,7 +338,7 @@ public static class SeedData
                         : null));
         }
     }
-
+    /// Obtiene el factor de SLA correspondiente a una prioridad.
     private static double GetSlaFactor(PrioridadSolicitud priority)
     {
         return priority switch
@@ -349,12 +353,12 @@ public static class SeedData
                 "Prioridad no soportada.")
         };
     }
-
+    /// Genera el identificador de una categoría.
     private static Guid CreateCategoryId(int sequence)
     {
         return Guid.Parse($"30000000-0000-0000-0000-{sequence:000000000000}");
     }
-
+    /// Genera el identificador de una solicitud.
     private static Guid CreateRequestId(Guid tenantId, int sequence)
     {
         var bytes = tenantId.ToByteArray();

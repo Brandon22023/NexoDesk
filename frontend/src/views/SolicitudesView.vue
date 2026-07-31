@@ -35,6 +35,7 @@ let listController: AbortController | null = null
 let searchTimer: number | null = null
 
 async function loadSolicitudes(): Promise<void> {
+  // Se descarta la consulta anterior para que una búsqueda reciente no muestre resultados desactualizados.
   listController?.abort()
   listController = new AbortController()
   loading.value = true
@@ -56,6 +57,7 @@ async function loadSolicitudes(): Promise<void> {
 }
 
 async function loadCategorias(): Promise<void> {
+  // Si las categorías no cargan, el listado sigue disponible para no impedir el seguimiento de solicitudes.
   categoryWarning.value = ''
 
   try {
@@ -67,6 +69,7 @@ async function loadCategorias(): Promise<void> {
 }
 
 function applyFilters(nextFilters: FiltrosSolicitudes): void {
+  // Todo cambio de criterio vuelve a la primera página para no mostrar una página que ya no existe en el resultado filtrado.
   const searchChanged = nextFilters.q !== filters.q
   Object.assign(filters, nextFilters, { page: 1 })
 
@@ -75,6 +78,7 @@ function applyFilters(nextFilters: FiltrosSolicitudes): void {
       window.clearTimeout(searchTimer)
     }
 
+    // La búsqueda espera una pausa breve para no consultar por cada letra escrita.
     searchTimer = window.setTimeout(() => {
       void loadSolicitudes()
       searchTimer = null
@@ -86,21 +90,25 @@ function applyFilters(nextFilters: FiltrosSolicitudes): void {
 }
 
 function clearFilters(): void {
+  // Limpiar restaura la vista inicial del listado, incluida la primera página.
   Object.assign(filters, DEFAULT_FILTERS)
   void loadSolicitudes()
 }
 
 function changePage(nextPage: number): void {
+  // Los filtros se conservan al cambiar de página para no perder el contexto de búsqueda.
   filters.page = nextPage
   void loadSolicitudes()
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 onMounted(() => {
+  // El listado y sus opciones de filtro se preparan al entrar para mostrar la información actual de la organización.
   void Promise.all([loadSolicitudes(), loadCategorias()])
 })
 
 onBeforeUnmount(() => {
+  // Al abandonar el listado se cancelan tareas pendientes para no actualizar una pantalla que ya no está activa.
   listController?.abort()
   if (searchTimer !== null) {
     window.clearTimeout(searchTimer)

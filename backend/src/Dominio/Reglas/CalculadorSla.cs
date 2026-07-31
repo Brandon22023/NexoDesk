@@ -2,6 +2,8 @@ using Dominio.Enums;
 
 namespace Dominio.Reglas;
 
+/// Contiene las reglas de negocio relacionadas con el cálculo
+/// y validación del SLA de las solicitudes.
 public static class CalculadorSla
 {
 
@@ -31,6 +33,8 @@ public static class CalculadorSla
         return fechaCreacion.AddHours(slaHoras * factor);
     }
 
+        /// Determina si una solicitud se encuentra vencida según su
+    /// fecha límite y estado actual.
     public static bool EstaVencida(
         DateTime fechaLimiteSla,
         EstadoSolicitud estado,

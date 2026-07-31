@@ -14,6 +14,8 @@ export async function login(
   credentials: LoginCredentials,
   signal?: AbortSignal,
 ): Promise<LoginResponse> {
+  
+  // El inicio de sesión no usa un token previo y no debe redirigir si las credenciales son rechazadas.
   const payload = await httpRequest<LoginResponse>(LOGIN_ENDPOINT, {
     method: 'POST',
     body: credentials,
@@ -33,6 +35,7 @@ export async function login(
 }
 
 function isLoginResponse(value: unknown): value is LoginResponse {
+  // Se valida la respuesta antes de guardar la sesión para no dejar a la persona con acceso incompleto.
   if (!isRecord(value) || !isUsuarioSesion(value.usuario)) {
     return false
   }
@@ -45,6 +48,7 @@ function isLoginResponse(value: unknown): value is LoginResponse {
 }
 
 function isUsuarioSesion(value: unknown): value is UsuarioSesion {
+  // La identidad debe incluir rol y organización para que la interfaz pueda aplicar sus reglas de acceso.
   if (!isRecord(value)) {
     return false
   }
@@ -59,5 +63,6 @@ function isUsuarioSesion(value: unknown): value is UsuarioSesion {
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
+  // Esta comprobación evita interpretar respuestas incompletas como datos válidos de la aplicación.
   return typeof value === 'object' && value !== null
 }

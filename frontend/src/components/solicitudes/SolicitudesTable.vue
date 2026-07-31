@@ -12,14 +12,17 @@ const dateFormatter = new Intl.DateTimeFormat('es-GT', {
 })
 
 function formatDate(value: string): string {
+  // Las fechas de SLA se muestran en el formato local para facilitar la priorización diaria.
   return dateFormatter.format(new Date(value))
 }
 
 function estadoLabel(value: SolicitudListaDto['estado']): string {
+  // El estado interno se adapta a una etiqueta fácil de leer en el listado.
   return value === 'EnProceso' ? 'En proceso' : value
 }
 
 function prioridadLabel(value: SolicitudListaDto['prioridad']): string {
+  // La prioridad crítica se presenta con la ortografía visible para la persona usuaria.
   return value === 'Critica' ? 'Crítica' : value
 }
 </script>

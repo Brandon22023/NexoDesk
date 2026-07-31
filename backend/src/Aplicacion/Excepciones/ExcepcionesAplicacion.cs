@@ -1,5 +1,8 @@
 namespace Aplicacion.Excepciones;
 
+
+/// Excepción base para representar los errores controlados de la capa
+/// de aplicación, incluyendo un código identificador.
 public abstract class ExcepcionAplicacion(
     string codigo,
     string message) : Exception(message)

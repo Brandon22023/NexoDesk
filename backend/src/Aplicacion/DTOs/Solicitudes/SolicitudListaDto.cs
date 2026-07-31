@@ -1,5 +1,8 @@
 namespace Aplicacion.DTOs.Solicitudes;
 
+
+/// DTO que representa la información resumida de una solicitud
+/// para mostrarla en un listado.
 public sealed record SolicitudListaDto(
     Guid Id,
     string Codigo,

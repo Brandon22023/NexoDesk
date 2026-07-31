@@ -14,6 +14,7 @@ const uiStore = useUiStore()
       <RouterView />
     </main>
 
+    <!-- Los avisos confirman acciones sin sacar a la persona de la pantalla en la que está trabajando. -->
     <Transition name="toast">
       <div
         v-if="uiStore.toast"

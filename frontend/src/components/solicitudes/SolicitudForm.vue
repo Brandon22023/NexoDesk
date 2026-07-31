@@ -33,6 +33,7 @@ const emit = defineEmits<{
 const form = reactive<SolicitudFormData>({ ...props.initialValue })
 const attempted = ref(false)
 
+// Las reglas de longitud se validan antes de enviar para dar una respuesta inmediata y coherente con la API.
 const tituloError = computed(() => {
   if (!attempted.value) return ''
   const length = form.titulo.trim().length
@@ -41,6 +42,7 @@ const tituloError = computed(() => {
   return ''
 })
 
+// La descripción pide suficiente contexto para que el equipo pueda atender la solicitud.
 const descripcionError = computed(() => {
   if (!attempted.value) return ''
   const length = form.descripcion.trim().length
@@ -49,6 +51,7 @@ const descripcionError = computed(() => {
   return ''
 })
 
+// La categoría es obligatoria porque define el compromiso de atención de la solicitud.
 const categoriaError = computed(() =>
   attempted.value && !form.categoriaId
     ? 'Selecciona una categoría.'
@@ -56,6 +59,7 @@ const categoriaError = computed(() =>
 )
 
 function submit(): void {
+  // Se envían valores sin espacios sobrantes para evitar registros que parezcan válidos pero no aporten información.
   attempted.value = true
 
   if (tituloError.value || descripcionError.value || categoriaError.value) {
@@ -71,6 +75,7 @@ function submit(): void {
 }
 
 function setPrioridad(event: Event): void {
+  // La prioridad elegida se conserva como parte de la solicitud para que el servidor calcule su SLA.
   form.prioridad = (event.target as HTMLSelectElement)
     .value as PrioridadSolicitud
 }

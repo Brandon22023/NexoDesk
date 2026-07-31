@@ -2,6 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Aplicacion.DTOs.Solicitudes;
 
+// Datos permitidos para actualizar una solicitud existente.
+// El cálculo del SLA se realiza nuevamente en el servidor cuando corresponde. 
 public sealed class EditarSolicitudRequest
 {
     // RN-04: fechaLimiteSla no forma parte del contrato; el servidor la calcula.

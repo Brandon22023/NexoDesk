@@ -17,6 +17,7 @@ const successMessage = ref('')
 let activeRequest: AbortController | null = null
 
 async function handleLogin(credentials: LoginCredentials): Promise<void> {
+  // Solo se mantiene el intento más reciente para no mezclar respuestas de accesos anteriores.
   activeRequest?.abort()
   activeRequest = new AbortController()
   isSubmitting.value = true
@@ -43,11 +44,13 @@ async function handleLogin(credentials: LoginCredentials): Promise<void> {
 }
 
 function clearFeedback(): void {
+  // Al corregir los datos se ocultan mensajes que ya no representan el intento actual.
   serverError.value = ''
   successMessage.value = ''
 }
 
 function getSafeRedirect(value: unknown): string | null {
+  // El destino se limita a rutas internas para no enviar a la persona fuera de MesaSitec después de iniciar sesión.
   return typeof value === 'string'
     && value.startsWith('/')
     && !value.startsWith('//')
@@ -57,6 +60,7 @@ function getSafeRedirect(value: unknown): string | null {
 }
 
 onBeforeUnmount(() => {
+  // Al salir del login se cancela la petición pendiente para no actualizar una pantalla que ya no está visible.
   activeRequest?.abort()
 })
 </script>

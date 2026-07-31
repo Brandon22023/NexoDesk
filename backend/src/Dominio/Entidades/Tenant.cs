@@ -1,5 +1,7 @@
 namespace Dominio.Entidades;
 
+/// Entidad que representa un tenant, utilizado para separar
+/// la información de diferentes organizaciones o clientes.
 public sealed class Tenant
 {
     private Tenant()
