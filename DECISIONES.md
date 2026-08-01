@@ -72,3 +72,14 @@ La implementación final sigue la fórmula y reglas definidas en la especificaci
 La idea general de los estados y sus cambios la entendí desde el inicio. Sin embargo, en algunos momentos tuve que volver a revisar la especificación para confirmar qué transiciones estaban permitidas y cuáles no.
 
 Esto me ayudó a verificar que estaba aplicando correctamente las reglas definidas y que no estaba permitiendo cambios de estado que no correspondían.
+
+## Tablas adicionales creadas automáticamente
+
+El sistema utiliza Entity Framework Core para manejar los cambios en la base de datos. Por esta razón aparecen dos tablas adicionales llamadas `__EFMigrationsHistory` y `__EFMigrationsLock`.
+
+Estas tablas no pertenecen al funcionamiento del sistema ni guardan información de usuarios, solicitudes o categorías.
+
+- `__EFMigrationsHistory`: guarda un registro de los cambios realizados en la base de datos.
+- `__EFMigrationsLock`: ayuda a evitar problemas si se intenta realizar un cambio al mismo tiempo desde dos procesos diferentes.
+
+Las únicas tablas creadas para la información del sistema son `Tenants`, `Usuarios`, `Categorias` y `Solicitudes`.
