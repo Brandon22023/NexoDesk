@@ -1,6 +1,6 @@
-# MesaSitec
+# NexoDesk
 
-MesaSitec es una mesa de servicio SaaS multi-tenant para gestionar solicitudes
+NexoDesk es una mesa de servicio SaaS multi-tenant para gestionar solicitudes
 por organización. Cada organización administra sus usuarios, categorías y
 solicitudes de forma aislada.
 
@@ -19,7 +19,7 @@ levanta ambos servicios con SQLite como base de datos.
 
    ```bash
    git clone <URL_DEL_REPOSITORIO>
-   cd prueba-tecnica-mesasitec
+   cd nexodesk
    ```
 
 2. Crea el archivo de variables de entorno desde el ejemplo.
@@ -62,7 +62,7 @@ los datos semilla se crean automáticamente cuando la base está vacía.
 
 ## Credenciales de prueba
 
-Contraseña para todos los usuarios: `Sitec.2026`
+Contraseña para todos los usuarios: `NexoDesk.2026`
 
 | Usuario | Organización | Rol |
 |---|---|---|
@@ -77,7 +77,7 @@ Contraseña para todos los usuarios: `Sitec.2026`
 ## Pruebas
 
 ```bash
-dotnet test backend/tests/Unitarios/MesaSitec.sln --configuration Release
+dotnet test backend/tests/Unitarios/NexoDesk.sln --configuration Release
 ```
 
 Para comprobar los tipos del frontend:

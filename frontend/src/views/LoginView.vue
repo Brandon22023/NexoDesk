@@ -50,7 +50,7 @@ function clearFeedback(): void {
 }
 
 function getSafeRedirect(value: unknown): string | null {
-  // El destino se limita a rutas internas para no enviar a la persona fuera de MesaSitec después de iniciar sesión.
+// El destino se limita a rutas internas para no enviar a la persona fuera de NexoDesk después de iniciar sesión.
   return typeof value === 'string'
     && value.startsWith('/')
     && !value.startsWith('//')

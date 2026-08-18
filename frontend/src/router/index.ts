@@ -21,7 +21,7 @@ const router = createRouter({
           name: 'solicitudes',
           component: () => import('../views/SolicitudesView.vue'),
           meta: {
-            title: 'Solicitudes | MesaSitec',
+title: 'Solicitudes | NexoDesk',
           },
         },
         {
@@ -29,7 +29,7 @@ const router = createRouter({
           name: 'solicitud-nueva',
           component: () => import('../views/SolicitudNuevaView.vue'),
           meta: {
-            title: 'Nueva solicitud | MesaSitec',
+title: 'Nueva solicitud | NexoDesk',
           },
         },
         {
@@ -37,7 +37,7 @@ const router = createRouter({
           name: 'solicitud-detalle',
           component: () => import('../views/SolicitudDetalleView.vue'),
           meta: {
-            title: 'Detalle de solicitud | MesaSitec',
+title: 'Detalle de solicitud | NexoDesk',
           },
         },
         {
@@ -45,7 +45,7 @@ const router = createRouter({
           name: 'solicitud-editar',
           component: () => import('../views/SolicitudEditarView.vue'),
           meta: {
-            title: 'Editar solicitud | MesaSitec',
+title: 'Editar solicitud | NexoDesk',
           },
         },
       ],
@@ -55,7 +55,7 @@ const router = createRouter({
       name: 'login',
       component: () => import('../views/LoginView.vue'),
       meta: {
-        title: 'Iniciar sesión | MesaSitec',
+title: 'Iniciar sesión | NexoDesk',
       },
     },
     {
@@ -89,7 +89,7 @@ router.afterEach((to) => {
   // El título cambia con la pantalla para que la navegación sea clara entre varias pestañas.
   document.title = typeof to.meta.title === 'string'
     ? to.meta.title
-    : 'MesaSitec'
+: 'NexoDesk'
 })
 
 export default router

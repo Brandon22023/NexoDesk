@@ -168,7 +168,7 @@ public sealed class SolicitudesController(
     private ObjectResult ParametroInvalido(string detail)
     {
         return Problem(
-            type: "https://mesasitec.local/errores/parametro-invalido",
+type: "https://nexodesk.local/errores/parametro-invalido",
             statusCode: StatusCodes.Status400BadRequest,
             title: "Parámetro inválido",
             detail: detail,
@@ -183,7 +183,7 @@ public sealed class SolicitudesController(
     private ObjectResult NoAutenticado()
     {
         return Problem(
-            type: "https://mesasitec.local/errores/no-autenticado",
+type: "https://nexodesk.local/errores/no-autenticado",
             statusCode: StatusCodes.Status401Unauthorized,
             title: "No autenticado",
             detail: "El token no contiene los claims requeridos.",

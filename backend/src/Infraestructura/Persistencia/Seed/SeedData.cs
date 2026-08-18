@@ -12,7 +12,7 @@ public static class SeedData
 {
 
     /// Inicializa la base de datos con los datos semilla.
-    private const string SeedPassword = "Sitec.2026";
+private const string SeedPassword = "NexoDesk.2026";
     private const string DefaultBaseDate = "2026-01-15T08:00:00Z";
 
     public static async Task InitializeAsync(

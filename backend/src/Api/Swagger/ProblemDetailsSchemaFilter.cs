@@ -4,7 +4,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Api.Swagger;
 
-/// <summary>Documenta las extensiones obligatorias del formato de error de MesaSitec.</summary>
+/// <summary>Documenta las extensiones obligatorias del formato de error de NexoDesk.</summary>
 public sealed class ProblemDetailsSchemaFilter : ISchemaFilter
 {
     public void Apply(OpenApiSchema schema, SchemaFilterContext context)

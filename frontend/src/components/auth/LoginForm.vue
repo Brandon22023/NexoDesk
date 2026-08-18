@@ -203,7 +203,7 @@ function showRecoveryHint(): void {
       :disabled="props.isSubmitting"
     >
       <span>
-        {{ props.isSubmitting ? 'Validando acceso…' : 'Ingresar a MesaSitec' }}
+{{ props.isSubmitting ? 'Validando acceso…' : 'Ingresar a NexoDesk' }}
       </span>
       <LoaderCircle
         v-if="props.isSubmitting"

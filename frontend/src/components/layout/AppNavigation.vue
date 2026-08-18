@@ -19,7 +19,7 @@ async function logout(): Promise<void> {
       <span class="app-nav__brand-mark" aria-hidden="true">
         <Headset :size="19" :stroke-width="1.8" />
       </span>
-      <span>Mesa<span>Sitec</span></span>
+<span>Nexo<span>Desk</span></span>
     </RouterLink>
 
     <nav class="app-nav__links" aria-label="Navegación principal">

@@ -8,7 +8,7 @@ import type {
   UsuarioSesion,
 } from '../types/auth'
 
-const SESSION_KEY = 'mesasitec.auth.session'
+const SESSION_KEY = 'nexodesk.auth.session'
 
 export const useAuthStore = defineStore('auth', () => {
   // La sesión vive solo durante la pestaña actual para no conservar el acceso en equipos compartidos.

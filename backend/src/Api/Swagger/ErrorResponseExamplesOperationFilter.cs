@@ -83,7 +83,7 @@ public sealed class ErrorResponseExamplesOperationFilter : IOperationFilter
         var value = new OpenApiObject
         {
             ["type"] = new OpenApiString(
-                $"https://mesasitec.local/errores/{codigo.ToLowerInvariant().Replace('_', '-')}"),
+$"https://nexodesk.local/errores/{codigo.ToLowerInvariant().Replace('_', '-')}"),
             ["title"] = new OpenApiString(title),
             ["status"] = new OpenApiInteger(status),
             ["detail"] = new OpenApiString(detail),

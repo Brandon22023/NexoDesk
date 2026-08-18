@@ -39,7 +39,7 @@ public sealed class ManejadorExcepciones(
         // Construye la respuesta siguiendo el formato application/problem+json.
         var problem = new ProblemDetails
         {
-            Type = $"https://mesasitec.local/errores/{codigo.ToLowerInvariant().Replace('_', '-')}",
+Type = $"https://nexodesk.local/errores/{codigo.ToLowerInvariant().Replace('_', '-')}",
             Title = title,
             Status = status,
             Detail = status == StatusCodes.Status500InternalServerError

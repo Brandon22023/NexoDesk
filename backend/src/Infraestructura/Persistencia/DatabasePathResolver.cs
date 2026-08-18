@@ -3,7 +3,7 @@ namespace Infraestructura.Persistencia;
 /// Proporciona utilidades para resolver la ubicación de la base de datos.
 public static class DatabasePathResolver
 {
-    private const string DatabaseFileName = "mesasitec.db";
+private const string DatabaseFileName = "nexodesk.db";
 
     /// Obtiene la ruta de la base de datos a partir de un directorio inicial.
     public static string Resolve(string startPath)

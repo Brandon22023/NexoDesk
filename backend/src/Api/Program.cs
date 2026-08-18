@@ -103,7 +103,7 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "MesaSitec API",
+Title = "NexoDesk API",
         Version = "v1",
         Description = "API de mesa de servicio multi-tenant."
     });
@@ -156,7 +156,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
                     .ToArray());
         var problem = new ValidationProblemDetails(errores)
         {
-            Type = "https://mesasitec.local/errores/validacion",
+Type = "https://nexodesk.local/errores/validacion",
             Title = "Error de validación",
             Status = StatusCodes.Status422UnprocessableEntity
         };
@@ -176,7 +176,7 @@ app.UseCors(FrontendCorsPolicy);
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "MesaSitec API v1");
+options.SwaggerEndpoint("/swagger/v1/swagger.json", "NexoDesk API v1");
     options.RoutePrefix = "swagger";
 });
 app.UseAuthentication();

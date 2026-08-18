@@ -7,12 +7,12 @@ import { Headset, Workflow } from '@lucide/vue'
   <div class="login-ambient login-ambient--two" aria-hidden="true"></div>
   <div class="login-ambient login-ambient--three" aria-hidden="true"></div>
 
-  <section class="login-brand-panel" aria-label="MesaSitec">
-    <RouterLink class="login-brand" to="/login" aria-label="MesaSitec, inicio">
+<section class="login-brand-panel" aria-label="NexoDesk">
+<RouterLink class="login-brand" to="/login" aria-label="NexoDesk, inicio">
       <span class="login-brand__mark" aria-hidden="true">
         <Headset :size="18" :stroke-width="1.8" />
       </span>
-      <span>Mesa<span>Sitec</span></span>
+<span>Nexo<span>Desk</span></span>
     </RouterLink>
 
     <div class="login-brand__copy">
