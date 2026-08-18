@@ -28,14 +28,6 @@ Mi participación se centró en analizar el enunciado, definir el enfoque de imp
 La mayor parte del código fue generada con asistencia de IA, pero cada funcionalidad fue revisada y validada antes de incorporarse al proyecto. También se realizaron múltiples ciclos de corrección y refinamiento para asegurar el cumplimiento de los requisitos de la prueba técnica.
 
 
-## 3. Con una semana adicional
-
-Si hubiera tenido una semana más, la habría dedicado principalmente a realizar más pruebas y validaciones del sistema. Me gustaría crear pruebas que recorran los flujos completos de uso, desde el inicio de sesión hasta la creación y gestión de solicitudes, para tener mayor confianza en que todo funciona correctamente.
-
-También agregaría la ejecución automática de las pruebas mediante GitHub Actions para verificar que los cambios futuros no rompan funcionalidades ya implementadas.
-
-Por último, invertiría tiempo en probar el proyecto en entornos completamente limpios para asegurar que cualquier persona pueda seguir el README, ejecutar los comandos indicados y tener el sistema funcionando sin inconvenientes.
-
 
 ## 4. Dificultad y resolución
 
